@@ -1,0 +1,5 @@
+package сli
+
+func main() {
+
+}
