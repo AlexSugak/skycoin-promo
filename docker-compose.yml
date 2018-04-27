@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql
+    container_name: "mysql"
+    restart: always
+    ports: 
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_DATABASE: skycoinpromo
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+  backend:
+    image: golang
+    container_name: "backend"
+    depends_on: 
+      - "mysql"
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      MYSQL: "mysql:3306"
+    volumes:
+      - ./cmd:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/cmd
+      - ./src:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/src
+      - ./vendor:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/vendor
+    command: /bin/bash -c 'cd /usr/local/go/src/github.com/AlexSugak/skycoin-promo/cmd/promo/ && go run ./promo.go -binding=0.0.0.0:8081 -mysql=mysql:3306'
+  web:
+    image: nginx
+    restart: always
+    container_name: "web"
+    depends_on: 
+      - "backend"
+    ports: 
+      - "80:80"
+    environment:
+      - NGINX_HOST=skycoinpromo
+      - NGINX_PORT=80
+    volumes:
+      - ./.nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./web/build/:/usr/share/nginx/html
+      - ./.nginx/vhost.d/proxy.conf:/etc/nginx/vhost.d/proxy.conf
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: /bin/bash -c "rm -rf /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"

@@ -1,4 +1,4 @@
-package promo
+package main
 
 func main() {
 
