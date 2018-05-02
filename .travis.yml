@@ -1,0 +1,10 @@
+language: go
+go:
+- 1.9
+install:
+- go get -t ./...
+- make install-linters
+sudo: required
+script:
+- make check
+- make build-web

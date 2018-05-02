@@ -1,4 +1,4 @@
-package сli
+package main
 
 func main() {
 
