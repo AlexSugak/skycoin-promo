@@ -7,6 +7,9 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
 
@@ -38,14 +41,14 @@ func (s *HTTPServer) Run() error {
 	defer log.Info("HTTP service stop")
 	signal.Notify(s.quit, os.Interrupt)
 
-	// r := s.setupRouter(SecureDecorator)
+	r := s.setupRouter()
 
 	s.httpListener = &http.Server{
 		Addr:         s.binding,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 15,
-		// Handler:      r,
+		Handler:      r,
 	}
 
 	errorC := make(chan error)
@@ -76,4 +79,22 @@ func (s *HTTPServer) Shutdown() error {
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.
 	return s.httpListener.Shutdown(ctx)
+}
+
+func (s *HTTPServer) setupRouter() http.Handler {
+	r := mux.NewRouter()
+
+	API := func(h func(*HTTPServer) httputil.APIHandler) http.Handler {
+		return httputil.AcceptJSONHandler(httputil.JSONHandler(httputil.ErrorHandler(s.log, h(s))))
+	}
+
+	r.Handle("/promo/activate", API(ActivationHandler)).Methods("POST")
+
+	// TODO: enable CORS
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+	h := handlers.CORS(originsOk, headersOk, methodsOk)(r)
+	return h
 }
