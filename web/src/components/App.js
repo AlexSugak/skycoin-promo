@@ -1,20 +1,71 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import styled, { injectGlobal, ThemeProvider } from 'styled-components';
+import { Flex } from 'grid-styled';
 
-class App extends Component {
-  componentDidMount() {
-  }
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
-}
+import Routes from './Routes';
 
-export default App;
+import theme from './theme';
+import store from '../store';
+
+import skycoinLight from '../fonts/skycoin-regular-webfont.woff';
+import skycoinBold from '../fonts/skycoin-bold-webfont.woff';
+
+injectGlobal`
+  @font-face {
+    font-family: ${theme.fontLight};
+    src: url(${skycoinLight}) format('woff');
+    font-weight: normal;
+  }
+  
+    @font-face {
+    font-family: ${theme.fontBold};
+    src: url(${skycoinBold}) format('woff');
+    font-weight: normal;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+    
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: ${theme.fontLight}, Arial, Helvetica, sans-serif;
+    color: ${theme.black};
+  }
+  
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    color: ${theme.colors.black};
+    text-decoration: none;
+  }
+`;
+
+const Wrapper = styled(Flex) `
+    min-height: 100vh;
+    max-width: 100%;
+    overflow-x: hidden;
+`;
+
+const Root = ({ locale, ...props }) => (
+    <ThemeProvider theme={theme}>
+        <Wrapper flexDirection="column">
+            <Routes {...props} />
+        </Wrapper>
+    </ThemeProvider>
+);
+
+export default () => (
+    <Provider store={store}>
+        <BrowserRouter>
+            <Switch>
+                <Route path="/" render={props => <Root {...props} locale="en" />} />
+            </Switch>
+        </BrowserRouter>
+    </Provider>
+);

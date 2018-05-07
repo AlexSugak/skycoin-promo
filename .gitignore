@@ -18,3 +18,7 @@ mysql_data
 gin-bin
 debug
 .vscode/
+
+.idea
+
+node_modules
