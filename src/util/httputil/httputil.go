@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/AlexSugak/skycoin-promo/src/errors"
 	"github.com/sirupsen/logrus"
-	"github.com/skycoin/getsky.org/src/errors"
 )
 
 // StatusError represents http handler error, includes original error and http status code to return

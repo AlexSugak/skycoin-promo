@@ -16,3 +16,5 @@
 mysql_data
 
 gin-bin
+debug
+.vscode/

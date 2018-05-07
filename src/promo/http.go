@@ -11,6 +11,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+
+	"gopkg.in/go-playground/validator.v9"
 )
 
 // HTTPServer holds http server info
@@ -20,6 +22,7 @@ type HTTPServer struct {
 	quit         chan os.Signal
 	log          logrus.FieldLogger
 	done         chan struct{}
+	validate     *validator.Validate
 }
 
 // NewHTTPServer creates new http server
@@ -29,8 +32,9 @@ func NewHTTPServer(binding string, log logrus.FieldLogger) *HTTPServer {
 		log: log.WithFields(logrus.Fields{
 			"prefix": "promo.http",
 		}),
-		quit: make(chan os.Signal, 1),
-		done: make(chan struct{}),
+		quit:     make(chan os.Signal, 1),
+		done:     make(chan struct{}),
+		validate: validator.New(),
 	}
 }
 
