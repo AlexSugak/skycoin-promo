@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/AlexSugak/skycoin-promo/src/security"
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -17,18 +18,20 @@ import (
 
 // HTTPServer holds http server info
 type HTTPServer struct {
-	binding      string
-	httpListener *http.Server
-	quit         chan os.Signal
-	log          logrus.FieldLogger
-	done         chan struct{}
-	validate     *validator.Validate
+	binding        string
+	checkRecaptcha security.RecaptchaChecker
+	httpListener   *http.Server
+	quit           chan os.Signal
+	log            logrus.FieldLogger
+	done           chan struct{}
+	validate       *validator.Validate
 }
 
 // NewHTTPServer creates new http server
-func NewHTTPServer(binding string, log logrus.FieldLogger) *HTTPServer {
+func NewHTTPServer(binding string, recaptchaSecret string, log logrus.FieldLogger) *HTTPServer {
 	return &HTTPServer{
-		binding: binding,
+		binding:        binding,
+		checkRecaptcha: security.InitRecaptchaChecker(recaptchaSecret),
 		log: log.WithFields(logrus.Fields{
 			"prefix": "promo.http",
 		}),
