@@ -43,11 +43,16 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		}
 
 		if err := s.validate.Struct(activationRequest); err != nil {
-			t := err.(validator.ValidationErrors)
-
-			return e.ValidatorErrorsResponse(t)
+			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
-		return json.NewEncoder(w).Encode("Your request was received")
+		res, err := s.checkRecaptcha(activationRequest.Recaptcha)
+		if err != nil {
+			return err
+		} else if !res {
+			return e.CreateSingleValidationError("recaptcha", "is not valid")
+		}
+
+		return json.NewEncoder(w).Encode(activationRequest)
 	}
 }
