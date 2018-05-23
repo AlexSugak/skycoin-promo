@@ -1,5 +1,9 @@
 START TRANSACTION;
+
 ALTER DATABASE skycoinpromo CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+SET @sql='ALTER DATABASE '+quotename(db_name())+' CHARACTER SET utf8 COLLATE utf8_unicode_ci;';
+EXEC(@sql)
 
 CREATE TABLE `Country` (
   `ISO` varchar(20) COLLATE utf8_unicode_ci NOT NULL,

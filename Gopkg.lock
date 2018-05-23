@@ -59,16 +59,16 @@
   revision = "9520e82c474b0a04dd04f8a40959027271bab992"
 
 [[projects]]
+  name = "github.com/namsral/flag"
+  packages = ["."]
+  revision = "71ceffbeb0ba60fccc853971bb3ed4d7d90bfd04"
+  version = "v1.7.4-pre"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/skycoin/getsky.org"
-  packages = ["src/errors"]
-  revision = "eb9fd755c0716063d7cb5a1892af039714de0644"
 
 [[projects]]
   branch = "master"
@@ -94,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "003a5a5cb64d27feb1989d7706a937f4ba28c3d53d52041ec4d2372dd25c9698"
+  inputs-digest = "1e56632ae097fd656aac6d1fc302fc49bcb79fa1bc723c538d0bbe05131c9ca8"
   solver-name = "gps-cdcl"
   solver-version = 1
