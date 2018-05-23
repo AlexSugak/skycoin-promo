@@ -17,7 +17,6 @@ func main() {
 	bindingFlag := flag.String("binding", "0.0.0.0:8081", "HTTP server binding")
 	// TODO: specify default value for recaptchaSecret
 	recaptchaSecret := flag.String("recaptchaSecret", "", "Recaptcha secret")
-	bindingFlag := flag.String("binding", "0.0.0.0:8081", "HTTP server binding")
 	mysqlFlag := flag.String("mysql", "root:root@(0.0.0.0:3306)", "MySQL connect string")
 
 	flag.Parse()
