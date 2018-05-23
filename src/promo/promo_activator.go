@@ -59,7 +59,12 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		}
 
-		if !promoCode.Activated {
+		if promoCode.PromoID == 0 {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%s' promo code doesn't exist", promoCode.Code),
+				Code: http.StatusBadRequest,
+			}
+		} else if !promoCode.Activated {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%s' promo code has been already activated", promoCode.Code),
 				Code: http.StatusBadRequest,
