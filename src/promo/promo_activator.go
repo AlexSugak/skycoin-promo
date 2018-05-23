@@ -13,18 +13,18 @@ import (
 
 // ActivationRequest represents a data for activation a promo code
 type ActivationRequest struct {
-	FirstName    string `json:"firstName" validate:"required"`
-	LastName     string `json:"lastName" validate:"required"`
-	Email        string `json:"email" validate:"required"`
-	MobilePhone  string `json:"mobilePhone" validate:"required"`
-	AddressLine1 string `json:"addressLine1" validate:"required"`
-	AddressLine2 string `json:"addressLine2" validate:"required"`
-	City         string `json:"city" validate:"required"`
-	Region       string `json:"region" validate:"required"`
-	PostCode     string `json:"postCode" validate:"required"`
-	Country      string `json:"country" validate:"required"`
-	Recaptcha    string `json:"recaptcha" validate:"required"`
-	PromotionID  string `json:"promotionID" validate:"required"`
+	FirstName     string `json:"firstName" validate:"required"`
+	LastName      string `json:"lastName" validate:"required"`
+	Email         string `json:"email" validate:"required"`
+	Mobile        string `json:"mobile" validate:"required"`
+	AddressLine1  string `json:"addressLine1" validate:"required"`
+	AddressLine2  string `json:"addressLine2" validate:"required"`
+	City          string `json:"city" validate:"required"`
+	Region        string `json:"region" validate:"required"`
+	Postcode      string `json:"postcode" validate:"required"`
+	Country       string `json:"country" validate:"required"`
+	Recaptcha     string `json:"recaptcha" validate:"required"`
+	PromotionCode string `json:"promotionCode" validate:"required"`
 }
 
 // ActivationHandler activates a promo
@@ -46,11 +46,24 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
+		// TODO: Uncomment when recaptcha will be ready
 		res, err := s.checkRecaptcha(activationRequest.Recaptcha)
 		if err != nil {
 			return err
 		} else if !res {
 			return e.CreateSingleValidationError("recaptcha", "is not valid")
+		}
+
+		promoCode, err := s.activator.GetPromoCodeByCode(activationRequest.PromotionCode)
+		if err != nil {
+			return err
+		}
+
+		if !promoCode.Activated {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%s' promo code has been already activated", promoCode.Code),
+				Code: http.StatusBadRequest,
+			}
 		}
 
 		return json.NewEncoder(w).Encode(activationRequest)
