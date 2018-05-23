@@ -41,6 +41,15 @@
   version = "v0.7.1"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/jmoiron/sqlx"
+  packages = [
+    ".",
+    "reflectx"
+  ]
+  revision = "2aeb6a910c2b94f2d5eb53d9895d80e27264ec41"
+
+[[projects]]
   name = "github.com/mattn/go-colorable"
   packages = ["."]
   revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
@@ -94,6 +103,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1e56632ae097fd656aac6d1fc302fc49bcb79fa1bc723c538d0bbe05131c9ca8"
+  inputs-digest = "25d0f8a670bfd0159c40193624689b7b372ba9060340b8684816e673ae057c4a"
   solver-name = "gps-cdcl"
   solver-version = 1
