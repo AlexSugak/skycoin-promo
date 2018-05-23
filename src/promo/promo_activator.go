@@ -47,22 +47,22 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		}
 
 		// TODO: Uncomment when recaptcha will be ready
-		res, err := s.checkRecaptcha(activationRequest.Recaptcha)
-		if err != nil {
-			return err
-		} else if !res {
-			return e.CreateSingleValidationError("recaptcha", "is not valid")
-		}
+		// res, err := s.checkRecaptcha(activationRequest.Recaptcha)
+		// if err != nil {
+		// 	return err
+		// } else if !res {
+		// 	return e.CreateSingleValidationError("recaptcha", "is not valid")
+		// }
 
 		promoCode, err := s.activator.GetPromoCodeByCode(activationRequest.PromotionCode)
 		if err != nil {
 			return err
 		}
 
-		if promoCode.PromoID == 0 {
+		if promoCode == nil {
 			return httputil.StatusError{
-				Err:  fmt.Errorf("'%s' promo code doesn't exist", promoCode.Code),
-				Code: http.StatusBadRequest,
+				Err:  fmt.Errorf("'%s' promo code doesn't exist", activationRequest.PromotionCode),
+				Code: http.StatusNotFound,
 			}
 		} else if !promoCode.Activated {
 			return httputil.StatusError{

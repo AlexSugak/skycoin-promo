@@ -3,7 +3,7 @@ package db
 import "github.com/AlexSugak/skycoin-promo/db/models"
 
 // GetPromoCodeByCode returns an entity of a PromoCode
-func (s Storage) GetPromoCodeByCode(code string) (models.PromoCode, error) {
+func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {
 	cmd := `SELECT ` +
 		`pc.Id, ` +
 		`pc.CreatedAt, ` +
@@ -18,8 +18,11 @@ func (s Storage) GetPromoCodeByCode(code string) (models.PromoCode, error) {
 	promoCode := models.PromoCode{}
 	err := s.DB.Get(&promoCode, cmd, code)
 	if err != nil {
-		return promoCode, err
+		if err.Error() == "sql: no rows in result set" {
+			return nil, nil
+		}
+		return &promoCode, err
 	}
 
-	return promoCode, nil
+	return &promoCode, nil
 }
