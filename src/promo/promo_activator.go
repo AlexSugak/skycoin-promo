@@ -7,7 +7,9 @@ import (
 
 	validator "gopkg.in/go-playground/validator.v9"
 
+	"github.com/AlexSugak/skycoin-promo/db/models"
 	e "github.com/AlexSugak/skycoin-promo/src/errors"
+	"github.com/AlexSugak/skycoin-promo/src/util"
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
 )
 
@@ -20,9 +22,9 @@ type ActivationRequest struct {
 	AddressLine1  string `json:"addressLine1" validate:"required"`
 	AddressLine2  string `json:"addressLine2" validate:"required"`
 	City          string `json:"city" validate:"required"`
-	Region        string `json:"region" validate:"required"`
+	State         string `json:"state" validate:"required"`
 	Postcode      string `json:"postcode" validate:"required"`
-	Country       string `json:"country" validate:"required"`
+	CountryCode   string `json:"countryCode" validate:"required"`
 	Recaptcha     string `json:"recaptcha" validate:"required"`
 	PromotionCode string `json:"promotionCode" validate:"required"`
 }
@@ -69,6 +71,30 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 				Err:  fmt.Errorf("'%s' promo code has been already activated", promoCode.Code),
 				Code: http.StatusBadRequest,
 			}
+		}
+
+		u := models.RegisteredUser{
+			Code:         promoCode.Code,
+			PromoCodeID:  promoCode.ID,
+			FirstName:    activationRequest.FirstName,
+			LastName:     activationRequest.LastName,
+			Email:        activationRequest.Email,
+			Mobile:       activationRequest.Mobile,
+			AddressLine1: activationRequest.AddressLine1,
+			AddressLine2: activationRequest.AddressLine2,
+			City:         activationRequest.City,
+			State:        activationRequest.State,
+			Postcode:     activationRequest.Postcode,
+			IP:           r.RemoteAddr,
+			CountryCode:  activationRequest.CountryCode,
+			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
+			Amount:       promoCode.Amount,
+			PublicKey:    "PublicKey",
+		}
+
+		err = s.activator.RegisterPromo(u)
+		if err != nil {
+			return err
 		}
 
 		return json.NewEncoder(w).Encode(activationRequest)

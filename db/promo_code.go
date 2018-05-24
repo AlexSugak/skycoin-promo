@@ -9,6 +9,7 @@ func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {
 		`pc.CreatedAt, ` +
 		`pc.PromoId, ` +
 		`pc.Code, ` +
+		`p.AmountPerAccount as Amount, ` +
 		`COALESCE(pc.Id = PromoCodeId, false) as Activated ` +
 		`FROM Promo p ` +
 		`INNER JOIN PromoCode pc on p.Id = pc.PromoId ` +
