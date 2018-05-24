@@ -25,10 +25,11 @@ services:
       MYSQL: "mysql:3306"
       RECAPTCHA_SECRET: ${RECAPTCHA_SECRET}
     volumes:
-      - ./cmd:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/cmd
+      - ./promo.go:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/promo.go
+      - ./config.config:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/config.config
       - ./src:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/src
       - ./vendor:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/vendor
-    command: /bin/bash -c 'cd /usr/local/go/src/github.com/AlexSugak/skycoin-promo/cmd/promo/ && go run ./promo.go -binding=0.0.0.0:8081 -mysql=mysql:3306 -recaptchaSecret=${RECAPTCHA_SECRET}'
+    command: /bin/bash -c 'cd /usr/local/go/src/github.com/AlexSugak/skycoin-promo/ && go run ./promo.go -binding=0.0.0.0:8081 -mysql=mysql:3306 -recaptchaSecret=${RECAPTCHA_SECRET}'
   web:
     image: nginx
     restart: always

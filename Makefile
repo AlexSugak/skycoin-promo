@@ -22,7 +22,7 @@ docker-up: ## Starts docker containers
 run-docker: build-web docker-up ## Run all containers
 
 promo: ## Run skycoin promo back-end. To add arguments, do 'make ARGS="--foo" promo'.
-	go run cmd/promo/promo.go ${ARGS}&
+	go run promo.go ${ARGS}&
 
 lint: ## Run linters. Use make install-linters first.
 	vendorcheck ./...
