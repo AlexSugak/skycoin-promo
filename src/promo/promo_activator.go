@@ -29,6 +29,11 @@ type ActivationRequest struct {
 	PromotionCode string `json:"promotionCode" validate:"required"`
 }
 
+// ActivationResponse represents a data for activation a promo code
+type ActivationResponse struct {
+	Seed string `json:"seed"`
+}
+
 // ActivationHandler activates a promo
 // Method: POST
 // Content-type: application/json
@@ -97,6 +102,21 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		}
 
-		return json.NewEncoder(w).Encode(activationRequest)
+		seed, err := s.skyNode.GetSeed()
+		if err != nil {
+			return err
+		}
+
+		csrf, err := s.skyNode.GetCsrfToken()
+		if err != nil {
+			return err
+		}
+
+		_, err = s.skyNode.CreateWallet(fmt.Sprintf("%s_%s_wallet_%s", u.FirstName, u.LastName, u.Code), seed, csrf)
+		if err != nil {
+			return err
+		}
+
+		return json.NewEncoder(w).Encode(ActivationResponse{Seed: seed})
 	}
 }

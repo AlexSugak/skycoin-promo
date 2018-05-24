@@ -9,6 +9,7 @@ import (
 
 	activator "github.com/AlexSugak/skycoin-promo/src/promo_activator"
 	"github.com/AlexSugak/skycoin-promo/src/security"
+	"github.com/AlexSugak/skycoin-promo/src/skynode"
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -22,6 +23,7 @@ type HTTPServer struct {
 	binding        string
 	activator      activator.PromoActivator
 	checkRecaptcha security.RecaptchaChecker
+	skyNode        skynode.SkyNode
 	httpListener   *http.Server
 	quit           chan os.Signal
 	log            logrus.FieldLogger
@@ -30,7 +32,11 @@ type HTTPServer struct {
 }
 
 // NewHTTPServer creates new http server
-func NewHTTPServer(binding string, recaptchaSecret string, log logrus.FieldLogger, activator activator.PromoActivator) *HTTPServer {
+func NewHTTPServer(binding string,
+	recaptchaSecret string,
+	log logrus.FieldLogger,
+	activator activator.PromoActivator,
+	skyNode skynode.SkyNode) *HTTPServer {
 	return &HTTPServer{
 		binding:        binding,
 		checkRecaptcha: security.InitRecaptchaChecker(recaptchaSecret),
@@ -41,6 +47,7 @@ func NewHTTPServer(binding string, recaptchaSecret string, log logrus.FieldLogge
 		done:      make(chan struct{}),
 		validate:  validator.New(),
 		activator: activator,
+		skyNode:   skyNode,
 	}
 }
 

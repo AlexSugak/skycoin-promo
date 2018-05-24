@@ -7,6 +7,7 @@ import (
 	"github.com/namsral/flag"
 
 	"github.com/AlexSugak/skycoin-promo/db"
+	"github.com/AlexSugak/skycoin-promo/skynode"
 	"github.com/AlexSugak/skycoin-promo/src/promo"
 	"github.com/AlexSugak/skycoin-promo/src/util/logger"
 	"github.com/jmoiron/sqlx"
@@ -17,6 +18,7 @@ func main() {
 	bindingFlag := flag.String("binding", "0.0.0.0:8081", "HTTP server binding")
 	// TODO: specify default value for recaptchaSecret
 	recaptchaSecret := flag.String("recaptchaSecret", "", "Recaptcha secret")
+	skyNodeURL := flag.String("skyNodeURL", "http://127.0.0.1:6420", "A base URL of skynode")
 	mysqlFlag := flag.String("mysql", "root:root@(0.0.0.0:3306)", "MySQL connect string")
 
 	flag.Parse()
@@ -29,7 +31,8 @@ func main() {
 	storage := db.NewStorage(sqlDb)
 	log := logger.InitLogger()
 	activator := storage
-	server := promo.NewHTTPServer(*bindingFlag, *recaptchaSecret, log, activator)
+	skyNode := skynode.NewSkyNode(*skyNodeURL)
+	server := promo.NewHTTPServer(*bindingFlag, *recaptchaSecret, log, activator, skyNode)
 
 	if err := server.Run(); err != nil {
 		panic(err.Error())
