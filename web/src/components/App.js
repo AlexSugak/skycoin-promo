@@ -33,7 +33,7 @@ injectGlobal`
     margin: 0;
     padding: 0;
     font-family: ${theme.fontLight}, Arial, Helvetica, sans-serif;
-    color: ${theme.black};
+    color: ${theme.colors.darkGrey};
   }
   
   ul {
@@ -41,7 +41,7 @@ injectGlobal`
     padding: 0;
   }
   a {
-    color: ${theme.colors.black};
+    color: ${theme.colors.primary};
     text-decoration: none;
   }
 `;

@@ -1,0 +1,67 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Field, reduxForm, Form } from 'redux-form';
+import { Flex, Box } from 'grid-styled';
+
+import Button from 'components/Button';
+import FormControl from 'components/FormControl';
+import Heading from 'components/Heading';
+import { required } from 'validation';
+
+class RegistrationForm extends React.Component {
+    render() {
+        const { handleSubmit, pristine, submitting } = this.props;
+
+        return (
+            <Form onSubmit={handleSubmit}>
+                <Heading mb={5} fontSize={2}>Name</Heading>
+                <Flex mx={-4} mb={6} wrap>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="text" name="firstName" label="First Name" component={FormControl} validate={[required]} />
+                    </Box>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="text" name="lastName" label="Last Name" component={FormControl} validate={[required]} />
+                    </Box>
+                </Flex>
+                <Heading mb={5} fontSize={2}>Contact Info</Heading>
+                <Flex mx={-4}wrap>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="email" name="email" label="Email" component={FormControl} validate={[required]} />
+                    </Box>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="tel" name="phone" label="Mobile Phone" component={FormControl} validate={[required]} />
+                    </Box>
+                </Flex>
+                <Field type="text" name="address1" label="Address line 1" component={FormControl} validate={[required]} />
+                <Field type="text" name="address2" label="Address line 2" component={FormControl} validate={[required]} />
+                <Flex mx={-4} wrap>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="text" name="city" label="City" component={FormControl} validate={[required]} />
+                    </Box>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="text" name="state" label="State/region" component={FormControl} validate={[required]} />
+                    </Box>
+                </Flex>
+                <Flex mx={-4} wrap>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="text" name="postcode" label="Postcode" component={FormControl} validate={[required]} />
+                    </Box>
+                    <Box width={[1, 1, 1 / 2]} px={4}>
+                        <Field type="text" name="country" label="Country" component={FormControl} validate={[required]} />
+                    </Box>
+                </Flex>
+                <Button disabled={pristine || submitting} primary>Submit</Button>
+            </Form>
+        )
+    }
+}
+
+RegistrationForm.propTypes = {
+    handleSubmit: PropTypes.func.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired,
+};
+
+export default reduxForm({
+    form: 'registrationForm'
+})(RegistrationForm);

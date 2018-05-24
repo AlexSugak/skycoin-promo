@@ -3,11 +3,13 @@ const breakpoints = [
 ];
 
 const colors = {
-    base: '#0072ff',
-    dark: '#101f34',
+    primary: '#0072ff',
+    secondary: '#101f34',
     white: '#fff',
-    lightGrey: '#b3bdca',
-    black: '#000',
+    grey: '#9B9B9B',
+    paleGrey: '#F4F4F4',
+    lightGrey: '#D2D2D2',
+    darkGrey: '#4A4A4A',
 };
 
 const space = [
@@ -27,6 +29,8 @@ const lineHeights = [
     1, 1.125, 1.25, 1.5
 ];
 
+const radius = [ 2, 4, 8 ];
+
 export default {
     breakpoints,
     colors,
@@ -34,10 +38,12 @@ export default {
     fontSizes,
     fontFamilies,
     lineHeights,
+    radius,
     fontLight: '\'SkycoinSans\'',
     fontBold: '\'SkycoinSansBold\'',
     container: {
         width: '90%',
-        maxWidth: '1280px',
-    }
+        maxWidth: '640px',
+    },
+    controlHeight: 38,
 };
