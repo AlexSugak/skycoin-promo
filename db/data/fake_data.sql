@@ -1,8 +1,8 @@
 INSERT INTO `Country`
 (`ISO`, `Name`) 
 VALUES
-(`US`, `United States of America`),
-(`GR`, `Greece`);
+('US', 'United States of America'),
+('GR', 'Greece');
 
 INSERT INTO `Promo` (`Name`, `Description`, `AmountPerAccount`, `MaxAccounts`, `AdminEmail`, `SourceKey`) VALUES ('SKY test promo', 'SKY test promo', '1', '20', 'sky.test@test.com', '123456');
 
@@ -27,4 +27,4 @@ INSERT INTO `PromoCode` (`PromoId`, `Code`) VALUES ('1', '18');
 INSERT INTO `PromoCode` (`PromoId`, `Code`) VALUES ('1', '19');
 INSERT INTO `PromoCode` (`PromoId`, `Code`) VALUES ('1', '20');
 
-INSERT INTO `Registration` (`Code`, `PromoCodeId`, `FirstName`, `LastName`, `Email`, `Mobile`, `AddressLine1`, `AddressLine2`, `City`, `State`, `Postcode`, `IP`, `UserAgent`, `CountryCode`) VALUES ('1', '1', 'Test', 'User', 'test@user.com', '123', 'Test', 'Test', 'Test', 'Test', 'Test', '111.111.111.111', 'TestUserAgent', 'US');
+INSERT INTO `Registration` (`PromoId`, `PromoCodeId`, `FirstName`, `LastName`, `Email`, `Mobile`, `AddressLine1`, `AddressLine2`, `City`, `State`, `Postcode`, `IP`, `UserAgent`, `CountryCode`) VALUES ('1', '1', 'Test', 'User', 'test@user.com', '123', 'Test', 'Test', 'Test', 'Test', 'Test', '111.111.111.111', 'TestUserAgent', 'US');
