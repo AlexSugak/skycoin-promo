@@ -48,9 +48,12 @@ func (s SkyNode) CreateWallet(name string, seed string, csrf string) (*Wallet, e
 	req.Header.Set("X-CSRF-Token", csrf)
 
 	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
 
 	w := &Wallet{}
-	json.NewDecoder(resp.Body).Decode(w)
+	err = json.NewDecoder(resp.Body).Decode(w)
 	if err != nil {
 		return nil, err
 	}

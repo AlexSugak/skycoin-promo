@@ -40,9 +40,6 @@ func (s Storage) RegisterPromo(u models.RegisteredUser) error {
 		`:Amount) `
 
 	_, err := s.DB.NamedExec(cmd, u)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
