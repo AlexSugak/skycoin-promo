@@ -71,7 +71,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 				Err:  fmt.Errorf("'%s' promo code doesn't exist", activationRequest.PromotionCode),
 				Code: http.StatusNotFound,
 			}
-		} else if !promoCode.Activated {
+		} else if promoCode.Activated {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%s' promo code has been already activated", promoCode.Code),
 				Code: http.StatusBadRequest,
@@ -79,7 +79,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		}
 
 		u := models.RegisteredUser{
-			Code:         promoCode.Code,
+			PromoID:      promoCode.PromoID,
 			PromoCodeID:  promoCode.ID,
 			FirstName:    activationRequest.FirstName,
 			LastName:     activationRequest.LastName,
@@ -112,7 +112,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		}
 
-		_, err = s.skyNode.CreateWallet(fmt.Sprintf("%s_%s_wallet_%s", u.FirstName, u.LastName, u.Code), seed, csrf)
+		_, err = s.skyNode.CreateWallet(fmt.Sprintf("%s_%s_promo_wallet_%s", u.FirstName, u.LastName, promoCode.Code), seed, csrf)
 		if err != nil {
 			return err
 		}

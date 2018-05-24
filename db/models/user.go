@@ -12,7 +12,7 @@ type RegisteredUser struct {
 	ID                    int64           `db:"Id"`
 	CreatedAt             time.Time       `db:"CreatedAt"`
 	UpdatedAt             time.Time       `db:"UpdatedAt"`
-	Code                  string          `db:"Code"`
+	PromoID               int64           `db:"PromoId"`
 	PromoCodeID           int64           `db:"PromoCodeId"`
 	FirstName             string          `db:"FirstName"`
 	LastName              string          `db:"LastName"`

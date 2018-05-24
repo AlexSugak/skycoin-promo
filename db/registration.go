@@ -5,7 +5,7 @@ import "github.com/AlexSugak/skycoin-promo/db/models"
 // RegisterPromo accepts a full user model and inserts it into a database
 func (s Storage) RegisterPromo(u models.RegisteredUser) error {
 	cmd := `INSERT INTO Registration ` +
-		`(Code, ` +
+		`(PromoId, ` +
 		`PromoCodeId, ` +
 		`FirstName, ` +
 		`LastName, ` +
@@ -22,7 +22,7 @@ func (s Storage) RegisterPromo(u models.RegisteredUser) error {
 		`PublicKey, ` +
 		`Amount) ` +
 		`VALUES ` +
-		`(:Code, ` +
+		`(:PromoId, ` +
 		`:PromoCodeId, ` +
 		`:FirstName, ` +
 		`:LastName, ` +
