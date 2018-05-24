@@ -1,10 +1,5 @@
 START TRANSACTION;
 
-ALTER DATABASE skycoinpromo CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-
-SET @sql='ALTER DATABASE '+quotename(db_name())+' CHARACTER SET utf8 COLLATE utf8_unicode_ci;';
-EXEC(@sql)
-
 CREATE TABLE `Country` (
   `ISO` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `Name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -49,7 +44,7 @@ CREATE TABLE `Registration` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'System generated, do not write',
   `UpdatedAt` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT 'This should never be set unless manual hack.  System generaged, do not write.',
-  `Code` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `PromoId` int(11) NOT NULL,
   `PromoCodeId` bigint(20) NOT NULL,
   `FirstName` varchar(100) DEFAULT NULL,
   `LastName` varchar(100) DEFAULT NULL,
@@ -68,8 +63,10 @@ CREATE TABLE `Registration` (
   `TransferError` varchar(1000) DEFAULT NULL COMMENT 'Hopefully Null most of the time.',
   `TransferTransactionId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`Id`),
+  KEY `FK_registration_promo_id` (`PromoId`),
   KEY `FK_registration_promo_id` (`PromoCodeId`),
   KEY `FK_registration_country_id` (`CountryCode`),
+  CONSTRAINT `FK_registration_promo_id` FOREIGN KEY (`PromoId`) REFERENCES `Promo` (`Id`),
   CONSTRAINT `FK_registration_country_id` FOREIGN KEY (`CountryCode`) REFERENCES `Country` (`ISO`),
   CONSTRAINT `FK_registration_promo_id` FOREIGN KEY (`PromoCodeId`) REFERENCES `PromoCode` (`Id`)
 );
