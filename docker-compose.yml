@@ -24,12 +24,13 @@ services:
     environment:
       MYSQL: "mysql:3306"
       RECAPTCHA_SECRET: ${RECAPTCHA_SECRET}
+      SKY_NODE_URL: ${SKY_NODE_URL}
     volumes:
       - ./promo.go:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/promo.go
       - ./config.config:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/config.config
       - ./src:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/src
       - ./vendor:/usr/local/go/src/github.com/AlexSugak/skycoin-promo/vendor
-    command: /bin/bash -c 'cd /usr/local/go/src/github.com/AlexSugak/skycoin-promo/ && go run ./promo.go -binding=0.0.0.0:8081 -mysql=mysql:3306 -recaptchaSecret=${RECAPTCHA_SECRET}'
+    command: /bin/bash -c 'cd /usr/local/go/src/github.com/AlexSugak/skycoin-promo/ && go run ./promo.go -binding=0.0.0.0:8081 -mysql=mysql:3306 -recaptchaSecret=${RECAPTCHA_SECRET} -skyNodeURL=${SKY_NODE_URL}'
   web:
     image: nginx
     restart: always
