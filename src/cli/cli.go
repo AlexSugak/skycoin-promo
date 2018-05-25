@@ -6,10 +6,12 @@ import (
 	gcli "github.com/urfave/cli"
 )
 
+// App represents CLI app
 type App struct {
 	gcli.App
 }
 
+// NewApp creates a new instance of the App
 func NewApp() *App {
 	gcliApp := gcli.NewApp()
 
@@ -32,7 +34,6 @@ func (app *App) Run(args []string) error {
 func onCommandUsageError(command string) gcli.OnUsageErrorFunc {
 	return func(c *gcli.Context, err error, isSubcommand bool) error {
 		fmt.Fprintf(c.App.Writer, "Error: %v\n\n", err)
-		gcli.ShowCommandHelp(c, command)
-		return nil
+		return gcli.ShowCommandHelp(c, command)
 	}
 }

@@ -23,7 +23,7 @@ type HTTPServer struct {
 	binding        string
 	activator      activator.PromoActivator
 	checkRecaptcha security.RecaptchaChecker
-	skyNode        skynode.SkyNodeAPI
+	skyNode        skynode.NodeAPI
 	httpListener   *http.Server
 	quit           chan os.Signal
 	log            logrus.FieldLogger
@@ -36,7 +36,7 @@ func NewHTTPServer(binding string,
 	recaptchaSecret string,
 	log logrus.FieldLogger,
 	activator activator.PromoActivator,
-	skyNode skynode.SkyNode) *HTTPServer {
+	skyNode skynode.NodeAPI) *HTTPServer {
 	return &HTTPServer{
 		binding:        binding,
 		checkRecaptcha: security.InitRecaptchaChecker(recaptchaSecret),

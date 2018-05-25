@@ -8,6 +8,9 @@ import (
 
 func testCommand() gcli.Command {
 	name := "testCommand"
+	// TODO: Remove it when new commands are implemented
+	// Following statement is used to suppress linter warning
+	_ = onCommandUsageError("suppress linter error")
 	return gcli.Command{
 		Name:         name,
 		Usage:        "Test command of the cli (works as echo)",
@@ -18,8 +21,7 @@ func testCommand() gcli.Command {
 			// get test arg
 			testArg := c.Args().First()
 			if testArg == "" {
-				gcli.ShowSubcommandHelp(c)
-				return nil
+				return gcli.ShowSubcommandHelp(c)
 			}
 
 			fmt.Println(testArg)
