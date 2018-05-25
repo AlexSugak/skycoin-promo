@@ -1,6 +1,6 @@
 package db
 
-import "github.com/AlexSugak/skycoin-promo/db/models"
+import "github.com/AlexSugak/skycoin-promo/src/db/models"
 
 // GetPromoCodeByCode returns an entity of a PromoCode
 func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {

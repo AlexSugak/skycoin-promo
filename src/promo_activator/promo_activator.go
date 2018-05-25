@@ -1,6 +1,6 @@
 package activator
 
-import "github.com/AlexSugak/skycoin-promo/db/models"
+import "github.com/AlexSugak/skycoin-promo/src/db/models"
 
 // PromoActivator is a type of a service that register users with theirs promo
 type PromoActivator interface {

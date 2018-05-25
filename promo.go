@@ -6,9 +6,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/namsral/flag"
 
-	"github.com/AlexSugak/skycoin-promo/db"
-	"github.com/AlexSugak/skycoin-promo/skynode"
+	"github.com/AlexSugak/skycoin-promo/src/db"
 	"github.com/AlexSugak/skycoin-promo/src/promo"
+	"github.com/AlexSugak/skycoin-promo/src/skynode"
 	"github.com/AlexSugak/skycoin-promo/src/util/logger"
 	"github.com/jmoiron/sqlx"
 )

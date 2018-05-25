@@ -7,7 +7,7 @@ import (
 
 	validator "gopkg.in/go-playground/validator.v9"
 
-	"github.com/AlexSugak/skycoin-promo/db/models"
+	"github.com/AlexSugak/skycoin-promo/src/db/models"
 	e "github.com/AlexSugak/skycoin-promo/src/errors"
 	"github.com/AlexSugak/skycoin-promo/src/util"
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"

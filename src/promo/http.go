@@ -23,7 +23,7 @@ type HTTPServer struct {
 	binding        string
 	activator      activator.PromoActivator
 	checkRecaptcha security.RecaptchaChecker
-	skyNode        skynode.SkyNode
+	skyNode        skynode.SkyNodeAPI
 	httpListener   *http.Server
 	quit           chan os.Signal
 	log            logrus.FieldLogger
