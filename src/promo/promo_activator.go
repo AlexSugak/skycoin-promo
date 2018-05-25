@@ -53,7 +53,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
-		// TODO: Uncomment when recaptcha will be ready
+		// TODO: Uncomment when API will be ready
 		// res, err := s.checkRecaptcha(activationRequest.Recaptcha)
 		// if err != nil {
 		// 	return err
@@ -94,12 +94,6 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			CountryCode:  activationRequest.CountryCode,
 			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
 			Amount:       promoCode.Amount,
-			PublicKey:    "PublicKey",
-		}
-
-		err = s.activator.RegisterPromo(u)
-		if err != nil {
-			return err
 		}
 
 		seed, err := s.skyNode.GetSeed()
@@ -112,7 +106,19 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		}
 
-		_, err = s.skyNode.CreateWallet(fmt.Sprintf("%s_%s_promo_wallet_%s", u.FirstName, u.LastName, promoCode.Code), seed, csrf)
+		wll, err := s.skyNode.CreateWallet(fmt.Sprintf("%s_%s_promo_wallet_%s", u.FirstName, u.LastName, promoCode.Code), seed, csrf)
+		if err != nil {
+			return err
+		}
+
+		// err := s.skyNode.TransferMoney(promoCode., promoCode.Amount), seed, csrf)
+		// if err != nil {
+		// 	return err
+		// }
+
+		u.PublicKey = wll.Entries[0].PublicKey
+		_, err = s.activator.RegisterUser(u)
+
 		if err != nil {
 			return err
 		}

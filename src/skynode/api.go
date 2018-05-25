@@ -61,6 +61,26 @@ func (s SkyNode) CreateWallet(name string, seed string, csrf string) (*Wallet, e
 	return w, nil
 }
 
+// TransferMoney transfers money from src wallet to dst wallet
+func (s SkyNode) TransferMoney(walletID string, dst string, coins string, csrf string) error {
+	form := url.Values{
+		"id":    {walletID},
+		"dst":   {dst},
+		"coins": {coins},
+	}
+
+	req, err := http.NewRequest("POST", (fmt.Sprintf("%s/wallet/spend", s.baseURL)), strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("X-CSRF-Token", csrf)
+
+	_, err = http.DefaultClient.Do(req)
+	return err
+}
+
 func get(url string, keyExtractor string) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {

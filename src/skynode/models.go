@@ -9,7 +9,7 @@ type WalletMeta struct {
 	Type       string `json:"type"`
 	Version    string `json:"version"`
 	CryptoType string `json:"crypto_type"`
-	Timestamp  string `json:"timestamp"`
+	Timestamp  int64  `json:"timestamp"`
 	Encrypted  bool   `json:"encrypted"`
 }
 

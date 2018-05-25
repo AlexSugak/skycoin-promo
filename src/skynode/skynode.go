@@ -5,4 +5,5 @@ type NodeAPI interface {
 	GetSeed() (string, error)
 	GetCsrfToken() (string, error)
 	CreateWallet(string, string, string) (*Wallet, error)
+	TransferMoney(walletID string, dst string, coins string) error
 }
