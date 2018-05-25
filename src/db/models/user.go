@@ -28,6 +28,8 @@ type RegisteredUser struct {
 	CountryCode           string          `db:"CountryCode"`
 	PublicKey             string          `db:"PublicKey"`
 	Amount                decimal.Decimal `db:"Amount"`
+	Status                string          `db:"Status"`
+	RejectionCode         int             `db:"RejectionCode"`
 	TransferError         sql.NullString  `db:"TransferError"`
 	TransferTransactionID sql.NullString  `db:"TransferTransactionID"`
 }

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/shopspring/decimal"
 )
 
 // SkyNode is main type for skynode access
@@ -62,12 +64,14 @@ func (s SkyNode) CreateWallet(name string, seed string, csrf string) (*Wallet, e
 }
 
 // TransferMoney transfers money from src wallet to dst wallet
-func (s SkyNode) TransferMoney(walletID string, dst string, coins string, csrf string) error {
+func (s SkyNode) TransferMoney(walletID string, dst string, coins decimal.Decimal, csrf string) error {
 	form := url.Values{
 		"id":    {walletID},
 		"dst":   {dst},
-		"coins": {coins},
+		"coins": {fmt.Sprint(coins)},
 	}
+
+	println(fmt.Sprint(coins))
 
 	req, err := http.NewRequest("POST", (fmt.Sprintf("%s/wallet/spend", s.baseURL)), strings.NewReader(form.Encode()))
 	if err != nil {

@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/shopspring/decimal"
 
 	validator "gopkg.in/go-playground/validator.v9"
 
@@ -15,18 +18,17 @@ import (
 
 // ActivationRequest represents a data for activation a promo code
 type ActivationRequest struct {
-	FirstName     string `json:"firstName" validate:"required"`
-	LastName      string `json:"lastName" validate:"required"`
-	Email         string `json:"email" validate:"required"`
-	Mobile        string `json:"mobile" validate:"required"`
-	AddressLine1  string `json:"addressLine1" validate:"required"`
-	AddressLine2  string `json:"addressLine2" validate:"required"`
-	City          string `json:"city" validate:"required"`
-	State         string `json:"state" validate:"required"`
-	Postcode      string `json:"postcode" validate:"required"`
-	CountryCode   string `json:"countryCode" validate:"required"`
-	Recaptcha     string `json:"recaptcha" validate:"required"`
-	PromotionCode string `json:"promotionCode" validate:"required"`
+	FirstName    string `json:"firstName" validate:"required"`
+	LastName     string `json:"lastName" validate:"required"`
+	Email        string `json:"email" validate:"required"`
+	Mobile       string `json:"mobile" validate:"required"`
+	AddressLine1 string `json:"addressLine1" validate:"required"`
+	AddressLine2 string `json:"addressLine2" validate:"required"`
+	City         string `json:"city" validate:"required"`
+	State        string `json:"state" validate:"required"`
+	Postcode     string `json:"postcode" validate:"required"`
+	CountryCode  string `json:"countryCode" validate:"required"`
+	Recaptcha    string `json:"recaptcha" validate:"required"`
 }
 
 // ActivationResponse represents a data for activation a promo code
@@ -37,11 +39,30 @@ type ActivationResponse struct {
 // ActivationHandler activates a promo
 // Method: POST
 // Content-type: application/json
-// URI: /promo/activate
+// URI: /promo/activate?pid={promoId}&code={promoCode}
 func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		activationRequest := &ActivationRequest{}
+		vars := r.URL.Query()
 
+		res, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
+		if err != nil {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("pid is not valid. pid should be a number"),
+				Code: http.StatusBadRequest,
+			}
+		}
+		pID := fmt.Sprintf("%d", res)
+
+		res, err = strconv.ParseInt(vars.Get("code"), 10, 64)
+		if err != nil {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("pCode is not valid. pCode should be a number"),
+				Code: http.StatusBadRequest,
+			}
+		}
+		pCode := fmt.Sprintf("%d", res)
+
+		activationRequest := &ActivationRequest{}
 		if err := json.NewDecoder(r.Body).Decode(activationRequest); err != nil {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("Invalid json body of the request: %v", err),
@@ -61,15 +82,30 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		// 	return e.CreateSingleValidationError("recaptcha", "is not valid")
 		// }
 
-		promoCode, err := s.activator.GetPromoCodeByCode(activationRequest.PromotionCode)
+		promo, err := s.activator.GetPromo(pID)
+		if err != nil {
+			return err
+		} else if promo == nil {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%s' promo campaign doesn't exist", pID),
+				Code: http.StatusNotFound,
+			}
+		}
+
+		promoCode, err := s.activator.GetPromoCodeByCode(pCode)
 		if err != nil {
 			return err
 		}
 
 		if promoCode == nil {
 			return httputil.StatusError{
-				Err:  fmt.Errorf("'%s' promo code doesn't exist", activationRequest.PromotionCode),
+				Err:  fmt.Errorf("'%s' promo code doesn't exist", pCode),
 				Code: http.StatusNotFound,
+			}
+		} else if promo.ID != promoCode.PromoID {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%s' promo code doesn't exist", pCode),
+				Code: http.StatusBadRequest,
 			}
 		} else if promoCode.Activated {
 			return httputil.StatusError{
@@ -87,11 +123,11 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			Mobile:       activationRequest.Mobile,
 			AddressLine1: activationRequest.AddressLine1,
 			AddressLine2: activationRequest.AddressLine2,
+			CountryCode:  activationRequest.CountryCode,
 			City:         activationRequest.City,
 			State:        activationRequest.State,
 			Postcode:     activationRequest.Postcode,
 			IP:           r.RemoteAddr,
-			CountryCode:  activationRequest.CountryCode,
 			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
 			Amount:       promoCode.Amount,
 		}
@@ -111,10 +147,17 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		}
 
-		// err := s.skyNode.TransferMoney(promoCode., promoCode.Amount), seed, csrf)
-		// if err != nil {
-		// 	return err
-		// }
+		csrf, err = s.skyNode.GetCsrfToken()
+		if err != nil {
+			return err
+		}
+
+		factor, _ := decimal.NewFromString("1000000")
+		coins := promo.AmountPerAccount.Mul(factor)
+		err = s.skyNode.TransferMoney(promo.SourceKey, wll.Entries[0].Address, coins, csrf)
+		if err != nil {
+			return err
+		}
 
 		u.PublicKey = wll.Entries[0].PublicKey
 		_, err = s.activator.RegisterUser(u)
