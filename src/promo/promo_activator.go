@@ -46,19 +46,13 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 
 		res, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
 		if err != nil {
-			return httputil.StatusError{
-				Err:  fmt.Errorf("pid is not valid. pid should be a number"),
-				Code: http.StatusBadRequest,
-			}
+			return e.CreateSingleValidationError("pid", "is not valid. pid should be a number")
 		}
 		pID := fmt.Sprintf("%d", res)
 
 		res, err = strconv.ParseInt(vars.Get("code"), 10, 64)
 		if err != nil {
-			return httputil.StatusError{
-				Err:  fmt.Errorf("pCode is not valid. pCode should be a number"),
-				Code: http.StatusBadRequest,
-			}
+			return e.CreateSingleValidationError("pCode", "is not valid. pCode should be a number")
 		}
 		pCode := fmt.Sprintf("%d", res)
 
@@ -74,13 +68,12 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
-		// TODO: Uncomment when API will be ready
-		// res, err := s.checkRecaptcha(activationRequest.Recaptcha)
-		// if err != nil {
-		// 	return err
-		// } else if !res {
-		// 	return e.CreateSingleValidationError("recaptcha", "is not valid")
-		// }
+		cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
+		if err != nil {
+			return err
+		} else if !cp {
+			return e.CreateSingleValidationError("recaptcha", "is not valid")
+		}
 
 		promo, err := s.activator.GetPromo(pID)
 		if err != nil {
