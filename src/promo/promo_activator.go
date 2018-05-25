@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/shopspring/decimal"
 
@@ -44,17 +45,15 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		vars := r.URL.Query()
 
-		res, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
+		pID, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
 		if err != nil {
 			return e.CreateSingleValidationError("pid", "is not valid. pid should be a number")
 		}
-		pID := fmt.Sprintf("%d", res)
 
-		res, err = strconv.ParseInt(vars.Get("code"), 10, 64)
-		if err != nil {
-			return e.CreateSingleValidationError("pCode", "is not valid. pCode should be a number")
+		pCode := vars.Get("code")
+		if pCode == "" {
+			return e.CreateSingleValidationError("code", "is not required")
 		}
-		pCode := fmt.Sprintf("%d", res)
 
 		activationRequest := &ActivationRequest{}
 		if err := json.NewDecoder(r.Body).Decode(activationRequest); err != nil {
@@ -75,13 +74,49 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.CreateSingleValidationError("recaptcha", "is not valid")
 		}
 
+		u := models.RegisteredUser{
+			PromoID:      pID,
+			FirstName:    activationRequest.FirstName,
+			LastName:     activationRequest.LastName,
+			Email:        activationRequest.Email,
+			Mobile:       activationRequest.Mobile,
+			AddressLine1: activationRequest.AddressLine1,
+			AddressLine2: activationRequest.AddressLine2,
+			CountryCode:  activationRequest.CountryCode,
+			City:         activationRequest.City,
+			State:        activationRequest.State,
+			Postcode:     activationRequest.Postcode,
+			IP:           r.RemoteAddr,
+			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
+		}
+
 		promo, err := s.activator.GetPromo(pID)
 		if err != nil {
 			return err
 		} else if promo == nil {
 			return httputil.StatusError{
-				Err:  fmt.Errorf("'%s' promo campaign doesn't exist", pID),
+				Err:  fmt.Errorf("'%d' promo campaign doesn't exist", pID),
 				Code: http.StatusNotFound,
+			}
+		} else if promo.StartAt != nil && time.Now().Before(*promo.StartAt) {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%d' promo campaign hasn't started yet", pID),
+				Code: http.StatusBadRequest,
+			}
+		} else if promo.EndAt != nil && time.Now().Before(*promo.EndAt) {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%d' promo campaign has already finished", pID),
+				Code: http.StatusBadRequest,
+			}
+		}
+
+		registeredCodesAmount, err := s.activator.GetRegisteredCodesAmount(promo.ID)
+		if err != nil {
+			return err
+		} else if registeredCodesAmount == promo.MaxAccounts {
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%d' promo campaign has already reached max amount of registered codes", pID),
+				Code: http.StatusBadRequest,
 			}
 		}
 
@@ -105,24 +140,6 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 				Err:  fmt.Errorf("'%s' promo code has been already activated", promoCode.Code),
 				Code: http.StatusBadRequest,
 			}
-		}
-
-		u := models.RegisteredUser{
-			PromoID:      promoCode.PromoID,
-			PromoCodeID:  promoCode.ID,
-			FirstName:    activationRequest.FirstName,
-			LastName:     activationRequest.LastName,
-			Email:        activationRequest.Email,
-			Mobile:       activationRequest.Mobile,
-			AddressLine1: activationRequest.AddressLine1,
-			AddressLine2: activationRequest.AddressLine2,
-			CountryCode:  activationRequest.CountryCode,
-			City:         activationRequest.City,
-			State:        activationRequest.State,
-			Postcode:     activationRequest.Postcode,
-			IP:           r.RemoteAddr,
-			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
-			Amount:       promoCode.Amount,
 		}
 
 		seed, err := s.skyNode.GetSeed()
@@ -152,6 +169,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		}
 
+		u.Status = "completed"
 		u.PublicKey = wll.Entries[0].PublicKey
 		_, err = s.activator.RegisterUser(u)
 

@@ -13,14 +13,16 @@ func (s Storage) RegisterUser(u models.RegisteredUser) (*models.RegisteredUser, 
 		`Mobile, ` +
 		`AddressLine1, ` +
 		`AddressLine2, ` +
-		`City, ` +
+		`CountryCode, ` +
 		`State, ` +
+		`City, ` +
 		`Postcode, ` +
 		`IP, ` +
 		`UserAgent, ` +
-		`CountryCode, ` +
 		`PublicKey, ` +
-		`Amount) ` +
+		`Amount, ` +
+		`Status, ` +
+		`RejectionCode) ` +
 		`VALUES ` +
 		`(:PromoId, ` +
 		`:PromoCodeId, ` +
@@ -30,14 +32,16 @@ func (s Storage) RegisterUser(u models.RegisteredUser) (*models.RegisteredUser, 
 		`:Mobile, ` +
 		`:AddressLine1, ` +
 		`:AddressLine2, ` +
-		`:City, ` +
+		`:CountryCode, ` +
 		`:State, ` +
+		`:City, ` +
 		`:Postcode, ` +
 		`:IP, ` +
 		`:UserAgent, ` +
-		`:CountryCode, ` +
 		`:PublicKey, ` +
-		`:Amount) `
+		`:Amount, ` +
+		`:Status, ` +
+		`:RejectionCode)`
 
 	res, err := s.DB.NamedExec(cmd, u)
 	if err != nil {
@@ -64,16 +68,54 @@ func (s Storage) UpdateRegistration(u models.RegisteredUser) error {
 		`Mobile=:Mobile, ` +
 		`AddressLine1=:AddressLine1, ` +
 		`AddressLine2=:AddressLine2, ` +
-		`City=:City, ` +
+		`CountryCode=:CountryCode, ` +
 		`State=:State, ` +
+		`City=:City, ` +
 		`Postcode=:Postcode, ` +
 		`IP=:IP, ` +
 		`UserAgent=:UserAgent, ` +
-		`CountryCode=:CountryCode, ` +
 		`PublicKey=:PublicKey, ` +
 		`Amount=:Amount ` +
+		`Status=:Status ` +
+		`RejectionCode=:RejectionCode ` +
 		`WHERE Id = :Id `
 
 	_, err := s.DB.NamedExec(cmd, u)
 	return err
+}
+
+// GetRegistrationsByEmailOrPhone returns registration with such email and mobile
+func (s Storage) GetRegistrationsByEmailOrPhone(email string, mobile string) (*models.RegisteredUser, error) {
+	cmd := `SELECT ` +
+		`r.PromoId, ` +
+		`r.PromoCodeId, ` +
+		`r.FirstName, ` +
+		`r.LastName, ` +
+		`r.Email, ` +
+		`r.Mobile, ` +
+		`r.AddressLine1, ` +
+		`r.AddressLine2, ` +
+		`r.CountryCode, ` +
+		`r.State, ` +
+		`r.City, ` +
+		`r.Postcode, ` +
+		`r.IP, ` +
+		`r.UserAgent, ` +
+		`r.PublicKey, ` +
+		`r.Amount, ` +
+		`r.Status, ` +
+		`r.RejectionCode ` +
+		`FROM Registration r ` +
+		`WHERE r.Email = ? OR r.Mobile = ?`
+
+	registration := models.RegisteredUser{}
+	err := s.DB.Get(&registration, cmd, email, mobile)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &registration, nil
 }

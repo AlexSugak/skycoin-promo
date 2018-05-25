@@ -3,7 +3,7 @@ package db
 import "github.com/AlexSugak/skycoin-promo/src/db/models"
 
 // GetPromo returns an entity of a Promo from the DB
-func (s Storage) GetPromo(ID string) (*models.Promo, error) {
+func (s Storage) GetPromo(ID int64) (*models.Promo, error) {
 	cmd := `SELECT ` +
 		`p.Id, ` +
 		`p.CreatedAt, ` +
@@ -32,7 +32,6 @@ func (s Storage) GetPromo(ID string) (*models.Promo, error) {
 		if err.Error() == "sql: no rows in result set" {
 			return nil, nil
 		}
-		println(err.Error())
 		return &promo, err
 	}
 
@@ -47,7 +46,7 @@ func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {
 		`pc.PromoId, ` +
 		`pc.Code, ` +
 		`p.AmountPerAccount as Amount, ` +
-		`COALESCE(pc.Id = PromoCodeId, false) as Activated ` +
+		`COALESCE(pc.Id = r.PromoCodeId, false) as Activated ` +
 		`FROM Promo p ` +
 		`INNER JOIN PromoCode pc on p.Id = pc.PromoId ` +
 		`LEFT JOIN Registration r on r.PromoCodeId = pc.Id ` +
@@ -63,4 +62,22 @@ func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {
 	}
 
 	return &promoCode, nil
+}
+
+// GetRegisteredCodesAmount calculates amount registered promo codes for such promoID
+func (s Storage) GetRegisteredCodesAmount(promoID int) (int, error) {
+	cmd := `SELECT DISTINCT COUNT(r.ID) ` +
+		`FROM Registration r ` +
+		`WHERE r.PromoId = ?`
+
+	registeredCodesAmount := 0
+	err := s.DB.Get(&registeredCodesAmount, cmd, promoID)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return registeredCodesAmount, nil
 }
