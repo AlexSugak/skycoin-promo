@@ -1,4 +1,4 @@
-package models
+package activator
 
 import (
 	"database/sql"

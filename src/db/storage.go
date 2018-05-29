@@ -14,4 +14,5 @@ func NewStorage(db *sqlx.DB) Storage {
 	return Storage{db}
 }
 
-const emptyResult = "sql: no rows in result set"
+// EmptyResult is sql error string that occurs when Get function doesn't return any results
+const EmptyResult = "sql: no rows in result set"

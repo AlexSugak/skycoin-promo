@@ -6,8 +6,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/namsral/flag"
 
-	"github.com/AlexSugak/skycoin-promo/src/db"
 	"github.com/AlexSugak/skycoin-promo/src/promo"
+	activator "github.com/AlexSugak/skycoin-promo/src/promo_activator"
 	"github.com/AlexSugak/skycoin-promo/src/skynode"
 	"github.com/AlexSugak/skycoin-promo/src/util/logger"
 	"github.com/jmoiron/sqlx"
@@ -27,7 +27,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	storage := db.NewStorage(sqlDb)
+	storage := activator.NewActivator(sqlDb)
 	log := logger.InitLogger()
 	activator := storage
 	skyNode := skynode.NewSkyNode(*skyNodeURL)

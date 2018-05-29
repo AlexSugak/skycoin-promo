@@ -11,8 +11,8 @@ import (
 
 	validator "gopkg.in/go-playground/validator.v9"
 
-	"github.com/AlexSugak/skycoin-promo/src/db/models"
 	e "github.com/AlexSugak/skycoin-promo/src/errors"
+	activator "github.com/AlexSugak/skycoin-promo/src/promo_activator"
 	"github.com/AlexSugak/skycoin-promo/src/util"
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
 )
@@ -49,9 +49,9 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return e.CreateSingleValidationError("pid", "is not valid. pid should be a number")
 		}
-		pID := models.PromoID(pir)
+		pID := activator.PromoID(pir)
 
-		pCode := models.Code(vars.Get("code"))
+		pCode := activator.Code(vars.Get("code"))
 		if pCode == "" {
 			return e.CreateSingleValidationError("code", "is not required")
 		}
@@ -75,12 +75,12 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.CreateSingleValidationError("recaptcha", "is not valid")
 		}
 
-		u := &models.RegisteredUser{
+		u := &activator.RegisteredUser{
 			PromoID:       pID,
 			FirstName:     activationRequest.FirstName,
 			LastName:      activationRequest.LastName,
-			Email:         models.Email(activationRequest.Email),
-			Mobile:        models.Mobile(activationRequest.Mobile),
+			Email:         activator.Email(activationRequest.Email),
+			Mobile:        activator.Mobile(activationRequest.Mobile),
 			AddressLine1:  activationRequest.AddressLine1,
 			AddressLine2:  activationRequest.AddressLine2,
 			CountryCode:   activationRequest.CountryCode,
@@ -89,14 +89,14 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			Postcode:      activationRequest.Postcode,
 			IP:            r.RemoteAddr,
 			UserAgent:     util.TrimLong(r.Header.Get("User-Agent"), 1000),
-			Status:        models.Rejected,
-			RejectionCode: models.Aborted,
+			Status:        activator.Rejected,
+			RejectionCode: activator.Aborted,
 		}
 
 		var publicKey *string
 		defer func() {
-			if u.Status != models.Completed {
-				u.Status = models.Rejected
+			if u.Status != activator.Completed {
+				u.Status = activator.Rejected
 			} else {
 				u.PublicKey = *publicKey
 			}
@@ -149,7 +149,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return err
 		} else if registeredCodesAmount > promo.MaxAccounts {
-			u.RejectionCode = models.MaxAccountsReached
+			u.RejectionCode = activator.MaxAccountsReached
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%d' promo campaign has already reached max amount of registered codes", pID),
 				Code: http.StatusBadRequest,
@@ -160,7 +160,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return err
 		} else if eu != nil {
-			u.RejectionCode = models.Duplicate
+			u.RejectionCode = activator.Duplicate
 			return httputil.StatusError{
 				Err:  fmt.Errorf("A user with such email or mobile has already registered"),
 				Code: http.StatusBadRequest,
@@ -193,8 +193,8 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return err
 		}
-		u.Status = models.Completed
-		u.RejectionCode = models.None
+		u.Status = activator.Completed
+		u.RejectionCode = activator.None
 		u.Amount = coins
 		publicKey = &wll.Entries[0].PublicKey
 
