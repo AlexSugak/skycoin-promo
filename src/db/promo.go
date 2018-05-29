@@ -46,7 +46,7 @@ func (s Storage) GetPromoCodeByCode(code models.Code) (*models.PromoCode, error)
 		`pc.PromoId, ` +
 		`pc.Code, ` +
 		`p.AmountPerAccount as Amount, ` +
-		`COALESCE(pc.Id = r.PromoCodeId, false) as Activated ` +
+		`COALESCE(r.Status = "completed", false) as Activated ` +
 		`FROM Promo p ` +
 		`INNER JOIN PromoCode pc on p.Id = pc.PromoId ` +
 		`LEFT JOIN Registration r on r.PromoCodeId = pc.Id ` +
@@ -68,7 +68,7 @@ func (s Storage) GetPromoCodeByCode(code models.Code) (*models.PromoCode, error)
 func (s Storage) GetRegisteredCodesAmount(promoID models.PromoID) (int, error) {
 	cmd := `SELECT DISTINCT COUNT(r.ID) ` +
 		`FROM Registration r ` +
-		`WHERE r.PromoId = ?`
+		`WHERE r.PromoId = ? AND r.Status = 'completed'`
 
 	registeredCodesAmount := 0
 	err := s.DB.Get(&registeredCodesAmount, cmd, promoID)
@@ -95,6 +95,6 @@ func (s Storage) InsertPromoCode(code *models.PromoCode) (*models.PromoCode, err
 		return nil, err
 	}
 
-	code.ID = id
+	code.ID = models.PromoCodeID(id)
 	return code, nil
 }
