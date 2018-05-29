@@ -45,11 +45,9 @@ func (s Storage) GetPromoCodeByCode(code models.Code) (*models.PromoCode, error)
 		`pc.CreatedAt, ` +
 		`pc.PromoId, ` +
 		`pc.Code, ` +
-		`p.AmountPerAccount as Amount, ` +
-		`COALESCE(r.Status = "completed", false) as Activated ` +
+		`p.AmountPerAccount as Amount ` +
 		`FROM Promo p ` +
 		`INNER JOIN PromoCode pc on p.Id = pc.PromoId ` +
-		`LEFT JOIN Registration r on r.PromoCodeId = pc.Id ` +
 		`WHERE pc.Code = ?`
 
 	promoCode := models.PromoCode{}
@@ -61,6 +59,13 @@ func (s Storage) GetPromoCodeByCode(code models.Code) (*models.PromoCode, error)
 		return &promoCode, err
 	}
 
+	registered := []int{}
+	cmd = `SELECT Id FROM Registration WHERE Status = 'completed' AND PromoCodeId = ?`
+	err = s.DB.Select(&registered, cmd, promoCode.ID)
+	if err != nil {
+		return nil, err
+	}
+	promoCode.Activated = len(registered) > 0
 	return &promoCode, nil
 }
 
