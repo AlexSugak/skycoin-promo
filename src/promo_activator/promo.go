@@ -3,6 +3,7 @@ package activator
 import (
 	"database/sql"
 	"database/sql/driver"
+	"strconv"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -21,7 +22,8 @@ func (r *PromoCodeID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		*r = PromoCodeID(src.(int64))
+		i64, _ := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+		*r = PromoCodeID(i64)
 	}
 	return nil
 }
@@ -39,7 +41,8 @@ func (r *PromoID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		*r = PromoID(src.(int64))
+		i64, _ := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+		*r = PromoID(i64)
 	}
 	return nil
 }
