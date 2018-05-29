@@ -76,27 +76,28 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		// }
 
 		u := &models.RegisteredUser{
-			PromoID:      pID,
-			FirstName:    activationRequest.FirstName,
-			LastName:     activationRequest.LastName,
-			Email:        activationRequest.Email,
-			Mobile:       activationRequest.Mobile,
-			AddressLine1: activationRequest.AddressLine1,
-			AddressLine2: activationRequest.AddressLine2,
-			CountryCode:  activationRequest.CountryCode,
-			City:         activationRequest.City,
-			State:        activationRequest.State,
-			Postcode:     activationRequest.Postcode,
-			IP:           r.RemoteAddr,
-			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
+			PromoID:       pID,
+			FirstName:     activationRequest.FirstName,
+			LastName:      activationRequest.LastName,
+			Email:         models.Email(activationRequest.Email),
+			Mobile:        models.Mobile(activationRequest.Mobile),
+			AddressLine1:  activationRequest.AddressLine1,
+			AddressLine2:  activationRequest.AddressLine2,
+			CountryCode:   activationRequest.CountryCode,
+			City:          activationRequest.City,
+			State:         activationRequest.State,
+			Postcode:      activationRequest.Postcode,
+			IP:            r.RemoteAddr,
+			UserAgent:     util.TrimLong(r.Header.Get("User-Agent"), 1000),
+			Status:        models.Rejected,
+			RejectionCode: models.Aborted,
 		}
 
 		var publicKey *string
 		defer func() {
-			if u.RejectionCode != 0 {
-				u.Status = string(models.Rejected)
+			if u.Status != models.Completed {
+				u.Status = models.Rejected
 			} else {
-				u.Status = string(models.Completed)
 				u.PublicKey = *publicKey
 			}
 			s.activator.RegisterUser(*u)
@@ -122,17 +123,6 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			}
 		}
 
-		registeredCodesAmount, err := s.activator.GetRegisteredCodesAmount(promo.ID)
-		if err != nil {
-			return err
-		} else if registeredCodesAmount == promo.MaxAccounts {
-			u.RejectionCode = int(models.MaxAccountsReached)
-			return httputil.StatusError{
-				Err:  fmt.Errorf("'%d' promo campaign has already reached max amount of registered codes", pID),
-				Code: http.StatusBadRequest,
-			}
-		}
-
 		promoCode, err := s.activator.GetPromoCodeByCode(pCode)
 		if err != nil {
 			return err
@@ -141,7 +131,9 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 				Err:  fmt.Errorf("'%s' promo code doesn't exist", pCode),
 				Code: http.StatusNotFound,
 			}
-		} else if promo.ID != promoCode.PromoID {
+		}
+		u.PromoCodeID = promoCode.ID
+		if promo.ID != promoCode.PromoID {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%s' promo code doesn't exist", pCode),
 				Code: http.StatusBadRequest,
@@ -149,6 +141,28 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		} else if promoCode.Activated {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%s' promo code has been already activated", promoCode.Code),
+				Code: http.StatusBadRequest,
+			}
+		}
+
+		registeredCodesAmount, err := s.activator.GetRegisteredCodesAmount(promo.ID)
+		if err != nil {
+			return err
+		} else if registeredCodesAmount == promo.MaxAccounts {
+			u.RejectionCode = models.MaxAccountsReached
+			return httputil.StatusError{
+				Err:  fmt.Errorf("'%d' promo campaign has already reached max amount of registered codes", pID),
+				Code: http.StatusBadRequest,
+			}
+		}
+
+		eu, err := s.activator.GetRegistrationByEmailOrPhone(u.Email, u.Mobile)
+		if err != nil {
+			return err
+		} else if eu != nil {
+			u.RejectionCode = models.Duplicate
+			return httputil.StatusError{
+				Err:  fmt.Errorf("A user with such email or mobile has already registered"),
 				Code: http.StatusBadRequest,
 			}
 		}

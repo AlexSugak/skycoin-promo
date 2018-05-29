@@ -84,8 +84,8 @@ func (s Storage) UpdateRegistration(u models.RegisteredUser) error {
 	return err
 }
 
-// GetRegistrationsByEmailOrPhone returns registration with such email and mobile
-func (s Storage) GetRegistrationsByEmailOrPhone(email string, mobile string) (*models.RegisteredUser, error) {
+// GetRegistrationByEmailOrPhone returns registration with such email and mobile
+func (s Storage) GetRegistrationByEmailOrPhone(email models.Email, mobile models.Mobile) (*models.RegisteredUser, error) {
 	cmd := `SELECT ` +
 		`r.PromoId, ` +
 		`r.PromoCodeId, ` +

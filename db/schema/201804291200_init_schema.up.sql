@@ -65,12 +65,8 @@ CREATE TABLE `Registration` (
   `TransferError` varchar(1000) DEFAULT NULL COMMENT 'Hopefully Null most of the time.',
   `TransferTransactionId` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  KEY `FK_registration_promo_id` (`PromoId`),
-  KEY `FK_registration_promo_code_id` (`PromoCodeId`),
   KEY `FK_registration_country_id` (`CountryCode`),
-  CONSTRAINT `FK_registration_promo_id` FOREIGN KEY (`PromoId`) REFERENCES `Promo` (`Id`),
-  CONSTRAINT `FK_registration_country_id` FOREIGN KEY (`CountryCode`) REFERENCES `Country` (`ISO`),
-  CONSTRAINT `FK_registration_promo_code_id` FOREIGN KEY (`PromoCodeId`) REFERENCES `PromoCode` (`Id`)
+  CONSTRAINT `FK_registration_country_id` FOREIGN KEY (`CountryCode`) REFERENCES `Country` (`ISO`)
 );
 
 COMMIT;

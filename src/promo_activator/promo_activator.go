@@ -9,5 +9,5 @@ type PromoActivator interface {
 	RegisterUser(models.RegisteredUser) (*models.RegisteredUser, error)
 	UpdateRegistration(u models.RegisteredUser) error
 	GetRegisteredCodesAmount(models.PromoID) (int, error)
-	GetRegistrationsByEmailOrPhone(string, string) (*models.RegisteredUser, error)
+	GetRegistrationByEmailOrPhone(models.Email, models.Mobile) (*models.RegisteredUser, error)
 }
