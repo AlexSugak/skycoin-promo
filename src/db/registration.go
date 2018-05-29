@@ -106,7 +106,7 @@ func (s Storage) GetRegistrationByEmailOrPhone(email models.Email, mobile models
 		`r.Status, ` +
 		`r.RejectionCode ` +
 		`FROM Registration r ` +
-		`WHERE r.Email = ? OR r.Mobile = ?`
+		`WHERE (r.Email = ? OR r.Mobile = ?) AND r.Status = 'completed'`
 
 	registration := models.RegisteredUser{}
 	err := s.DB.Get(&registration, cmd, email, mobile)

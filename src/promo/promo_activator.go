@@ -148,7 +148,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		registeredCodesAmount, err := s.activator.GetRegisteredCodesAmount(promo.ID)
 		if err != nil {
 			return err
-		} else if registeredCodesAmount == promo.MaxAccounts {
+		} else if registeredCodesAmount > promo.MaxAccounts {
 			u.RejectionCode = models.MaxAccountsReached
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%d' promo campaign has already reached max amount of registered codes", pID),
@@ -195,6 +195,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		}
 		u.Status = models.Completed
 		u.RejectionCode = models.None
+		u.Amount = coins
 		publicKey = &wll.Entries[0].PublicKey
 
 		return json.NewEncoder(w).Encode(ActivationResponse{Seed: seed})
