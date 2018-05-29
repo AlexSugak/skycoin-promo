@@ -193,6 +193,8 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return err
 		}
+		u.Status = models.Completed
+		u.RejectionCode = models.None
 		publicKey = &wll.Entries[0].PublicKey
 
 		return json.NewEncoder(w).Encode(ActivationResponse{Seed: seed})

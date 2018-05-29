@@ -75,13 +75,15 @@ type RegisteredUser struct {
 type RejectionCode int
 
 const (
-	// MaxAccountsReached means that there is no left promo codes
+	// None - registration success
+	None RejectionCode = 0
+	// MaxAccountsReached - there is no left promo codes
 	MaxAccountsReached RejectionCode = 100
-	// InvalidRedeemCode means that something wrong with promo code
+	// InvalidRedeemCode - something wrong with promo code
 	InvalidRedeemCode RejectionCode = 101
-	// Duplicate means that such promo code has been already registered
+	// Duplicate - such promo code has been already registered
 	Duplicate RejectionCode = 102
-	// Aborted means that request is not validated
+	// Aborted - request is not validated
 	Aborted RejectionCode = 103
 )
 
