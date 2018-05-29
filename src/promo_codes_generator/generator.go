@@ -4,7 +4,7 @@ import "github.com/jmoiron/sqlx"
 
 // PromoGenerator represents a service that generates promocodes
 type PromoGenerator interface {
-	Generate(promoId string, count int) error
+	Generate(promoID string, count int) error
 }
 
 // Generator represents a service that generates promocodes
@@ -18,6 +18,6 @@ func NewGenerator(DB *sqlx.DB) *Generator {
 }
 
 // Generate generates promo codes for specified promo campaign
-func (g Generator) Generate(promoId string, count int) error {
+func (g Generator) Generate(promoID string, count int) error {
 	return nil
 }

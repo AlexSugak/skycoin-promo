@@ -13,3 +13,5 @@ type Storage struct {
 func NewStorage(db *sqlx.DB) Storage {
 	return Storage{db}
 }
+
+const emptyResult = "sql: no rows in result set"

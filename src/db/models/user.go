@@ -97,7 +97,7 @@ func (r *RejectionCode) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		*r = RejectionCode(int64(src.(int64)))
+		*r = RejectionCode(src.(int64))
 	}
 	return nil
 }

@@ -111,7 +111,7 @@ func (s Storage) GetRegistrationByEmailOrPhone(email models.Email, mobile models
 	registration := models.RegisteredUser{}
 	err := s.DB.Get(&registration, cmd, email, mobile)
 	if err != nil {
-		if err.Error() == "sql: no rows in result set" {
+		if err.Error() == emptyResult {
 			return nil, nil
 		}
 		return nil, err

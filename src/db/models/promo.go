@@ -21,7 +21,7 @@ func (r *PromoCodeID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		*r = PromoCodeID(int64(src.(int64)))
+		*r = PromoCodeID(src.(int64))
 	}
 	return nil
 }
@@ -39,7 +39,7 @@ func (r *PromoID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		*r = PromoID(int64(src.(int64)))
+		*r = PromoID(src.(int64))
 	}
 	return nil
 }

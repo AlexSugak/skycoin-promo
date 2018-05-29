@@ -68,12 +68,12 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
-		// cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
-		// if err != nil {
-		// 	return err
-		// } else if !cp {
-		// 	return e.CreateSingleValidationError("recaptcha", "is not valid")
-		// }
+		cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
+		if err != nil {
+			return err
+		} else if !cp {
+			return e.CreateSingleValidationError("recaptcha", "is not valid")
+		}
 
 		u := &models.RegisteredUser{
 			PromoID:       pID,
@@ -100,7 +100,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			} else {
 				u.PublicKey = *publicKey
 			}
-			s.activator.RegisterUser(*u)
+			_, _ = s.activator.RegisterUser(*u)
 		}()
 
 		promo, err := s.activator.GetPromo(pID)

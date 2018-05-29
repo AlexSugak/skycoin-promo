@@ -29,7 +29,7 @@ func (s Storage) GetPromo(ID models.PromoID) (*models.Promo, error) {
 	promo := models.Promo{}
 	err := s.DB.Get(&promo, cmd, ID)
 	if err != nil {
-		if err.Error() == "sql: no rows in result set" {
+		if err.Error() == emptyResult {
 			return nil, nil
 		}
 		return &promo, err
@@ -53,7 +53,7 @@ func (s Storage) GetPromoCodeByCode(code models.Code) (*models.PromoCode, error)
 	promoCode := models.PromoCode{}
 	err := s.DB.Get(&promoCode, cmd, code)
 	if err != nil {
-		if err.Error() == "sql: no rows in result set" {
+		if err.Error() == emptyResult {
 			return nil, nil
 		}
 		return &promoCode, err
@@ -78,7 +78,7 @@ func (s Storage) GetRegisteredCodesAmount(promoID models.PromoID) (int, error) {
 	registeredCodesAmount := 0
 	err := s.DB.Get(&registeredCodesAmount, cmd, promoID)
 	if err != nil {
-		if err.Error() == "sql: no rows in result set" {
+		if err.Error() == emptyResult {
 			return 0, nil
 		}
 		return 0, err
