@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/AlexSugak/skycoin-promo/src/promo_codes_generator"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/namsral/flag"
 
@@ -27,11 +29,11 @@ func main() {
 		panic(err.Error())
 	}
 
-	storage := activator.NewActivator(sqlDb)
 	log := logger.InitLogger()
-	activator := storage
+	generator := generator.NewGenerator(sqlDb)
+	activator := activator.NewActivator(sqlDb)
 	skyNode := skynode.NewSkyNode(*skyNodeURL)
-	server := promo.NewHTTPServer(*bindingFlag, *recaptchaSecret, log, activator, skyNode)
+	server := promo.NewHTTPServer(*bindingFlag, *recaptchaSecret, log, activator, skyNode, *generator)
 
 	if err := server.Run(); err != nil {
 		panic(err.Error())

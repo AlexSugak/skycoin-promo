@@ -8,6 +8,7 @@ import (
 	"time"
 
 	activator "github.com/AlexSugak/skycoin-promo/src/promo_activator"
+	generator "github.com/AlexSugak/skycoin-promo/src/promo_codes_generator"
 	"github.com/AlexSugak/skycoin-promo/src/security"
 	"github.com/AlexSugak/skycoin-promo/src/skynode"
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
@@ -23,6 +24,7 @@ type HTTPServer struct {
 	binding        string
 	activator      activator.PromoActivator
 	checkRecaptcha security.RecaptchaChecker
+	generator      generator.Generator
 	skyNode        skynode.NodeAPI
 	httpListener   *http.Server
 	quit           chan os.Signal
@@ -36,7 +38,8 @@ func NewHTTPServer(binding string,
 	recaptchaSecret string,
 	log logrus.FieldLogger,
 	activator activator.PromoActivator,
-	skyNode skynode.NodeAPI) *HTTPServer {
+	skyNode skynode.NodeAPI,
+	generator generator.Generator) *HTTPServer {
 	return &HTTPServer{
 		binding:        binding,
 		checkRecaptcha: security.InitRecaptchaChecker(recaptchaSecret),
@@ -48,6 +51,7 @@ func NewHTTPServer(binding string,
 		validate:  validator.New(),
 		activator: activator,
 		skyNode:   skyNode,
+		generator: generator,
 	}
 }
 
@@ -105,7 +109,8 @@ func (s *HTTPServer) setupRouter() http.Handler {
 		return httputil.AcceptJSONHandler(httputil.JSONHandler(httputil.ErrorHandler(s.log, h(s))))
 	}
 
-	r.Handle("/promo/activate", API(ActivationHandler)).Methods("POST")
+	r.Handle("/promo/codes/generate", API(GenerationHandler)).Methods("POST")
+	r.Handle("/promo/{promoId}/{code}", API(ActivationHandler)).Methods("POST")
 
 	// TODO: enable CORS
 	originsOk := handlers.AllowedOrigins([]string{"*"})

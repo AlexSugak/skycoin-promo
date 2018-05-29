@@ -10,7 +10,7 @@ type PromoActivator interface {
 	GetPromo(PromoID) (*Promo, error)
 	GetPromoCodeByCode(Code) (*PromoCode, error)
 	RegisterUser(RegisteredUser) (*RegisteredUser, error)
-	UpdateRegistration(u RegisteredUser) error
+	UpdateRegistration(RegisteredUser) error
 	GetRegisteredCodesAmount(PromoID) (int, error)
 	GetRegistrationByEmailOrPhone(Email, Mobile) (*RegisteredUser, error)
 }
@@ -226,21 +226,4 @@ func (s Activator) GetRegisteredCodesAmount(promoID PromoID) (int, error) {
 	}
 
 	return registeredCodesAmount, nil
-}
-
-// InsertPromoCode inserts a new promocode to the database
-func (s Activator) InsertPromoCode(code *PromoCode) (*PromoCode, error) {
-	cmd := "INSERT INTO PromoCode (PromoId, Code) VALUES(:PromoId, :Code)"
-
-	res, err := s.DB.NamedExec(cmd, code)
-	if err != nil {
-		return nil, err
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	code.ID = PromoCodeID(id)
-	return code, nil
 }

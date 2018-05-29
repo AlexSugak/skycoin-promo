@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/shopspring/decimal"
 
 	validator "gopkg.in/go-playground/validator.v9"
@@ -40,20 +41,20 @@ type ActivationResponse struct {
 // ActivationHandler activates a promo
 // Method: POST
 // Content-type: application/json
-// URI: /promo/activate?pid={promoId}&code={promoCode}
+// URI: /promo/{promoId}/{promoCode}
 func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		vars := r.URL.Query()
+		vars := mux.Vars(r)
 
-		pir, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
+		pir, err := strconv.ParseInt(vars["promoId"], 10, 64)
 		if err != nil {
-			return e.CreateSingleValidationError("pid", "is not valid. pid should be a number")
+			return e.CreateSingleValidationError("promoId", "is not valid. promoId should be a number")
 		}
 		pID := activator.PromoID(pir)
 
-		pCode := activator.Code(vars.Get("code"))
+		pCode := activator.Code(vars["promoCode"])
 		if pCode == "" {
-			return e.CreateSingleValidationError("code", "is not required")
+			return e.CreateSingleValidationError("promoCode", "is not required")
 		}
 
 		activationRequest := &ActivationRequest{}
