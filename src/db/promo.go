@@ -81,3 +81,20 @@ func (s Storage) GetRegisteredCodesAmount(promoID int) (int, error) {
 
 	return registeredCodesAmount, nil
 }
+
+// InsertPromoCode inserts a new promocode to the database
+func (s Storage) InsertPromoCode(code *models.PromoCode) (*models.PromoCode, error) {
+	cmd := "INSERT INTO PromoCode (PromoId, Code) VALUES(:PromoId, :Code)"
+
+	res, err := s.DB.NamedExec(cmd, code)
+	if err != nil {
+		return nil, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	code.ID = id
+	return code, nil
+}
