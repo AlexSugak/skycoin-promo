@@ -45,12 +45,13 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		vars := r.URL.Query()
 
-		pID, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
+		pir, err := strconv.ParseInt(vars.Get("pid"), 10, 64)
 		if err != nil {
 			return e.CreateSingleValidationError("pid", "is not valid. pid should be a number")
 		}
+		pID := models.PromoID(pir)
 
-		pCode := vars.Get("code")
+		pCode := models.Code(vars.Get("code"))
 		if pCode == "" {
 			return e.CreateSingleValidationError("code", "is not required")
 		}
@@ -67,14 +68,14 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
-		cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
-		if err != nil {
-			return err
-		} else if !cp {
-			return e.CreateSingleValidationError("recaptcha", "is not valid")
-		}
+		// cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
+		// if err != nil {
+		// 	return err
+		// } else if !cp {
+		// 	return e.CreateSingleValidationError("recaptcha", "is not valid")
+		// }
 
-		u := models.RegisteredUser{
+		u := &models.RegisteredUser{
 			PromoID:      pID,
 			FirstName:    activationRequest.FirstName,
 			LastName:     activationRequest.LastName,
@@ -89,6 +90,17 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			IP:           r.RemoteAddr,
 			UserAgent:    util.TrimLong(r.Header.Get("User-Agent"), 1000),
 		}
+
+		var publicKey *string
+		defer func() {
+			if u.RejectionCode != 0 {
+				u.Status = string(models.Rejected)
+			} else {
+				u.Status = string(models.Completed)
+				u.PublicKey = *publicKey
+			}
+			s.activator.RegisterUser(*u)
+		}()
 
 		promo, err := s.activator.GetPromo(pID)
 		if err != nil {
@@ -114,6 +126,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return err
 		} else if registeredCodesAmount == promo.MaxAccounts {
+			u.RejectionCode = int(models.MaxAccountsReached)
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%d' promo campaign has already reached max amount of registered codes", pID),
 				Code: http.StatusBadRequest,
@@ -123,9 +136,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		promoCode, err := s.activator.GetPromoCodeByCode(pCode)
 		if err != nil {
 			return err
-		}
-
-		if promoCode == nil {
+		} else if promoCode == nil {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("'%s' promo code doesn't exist", pCode),
 				Code: http.StatusNotFound,
@@ -168,14 +179,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		if err != nil {
 			return err
 		}
-
-		u.Status = "completed"
-		u.PublicKey = wll.Entries[0].PublicKey
-		_, err = s.activator.RegisterUser(u)
-
-		if err != nil {
-			return err
-		}
+		publicKey = &wll.Entries[0].PublicKey
 
 		return json.NewEncoder(w).Encode(ActivationResponse{Seed: seed})
 	}

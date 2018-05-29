@@ -7,22 +7,31 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// PromoCodeID represents an unique identifier of the PromoCode entity
+type PromoCodeID int64
+
+// PromoID represents an unique identifier of the Promo entity
+type PromoID int64
+
+// Code represents a PromoCode's property that corresponds unique string that used for registration a user in a promo campaign
+type Code string
+
 // PromoCode represents a promo code entry in the db
 // Field 'Activated' is calculated by a query
 type PromoCode struct {
-	ID        int64           `db:"Id"`
+	ID        PromoCodeID     `db:"Id"`
 	CreatedAt time.Time       `db:"CreatedAt"`
-	PromoID   int64           `db:"PromoId"`
-	Code      string          `db:"Code"`
+	PromoID   PromoID         `db:"PromoId"`
+	Code      Code            `db:"Code"`
 	Activated bool            `db:"Activated"`
 	Amount    decimal.Decimal `db:"Amount"`
 }
 
 // Promo represents a promo entry in the db
 type Promo struct {
-	ID               int64            `db:"Id"`
+	ID               PromoID          `db:"Id"`
 	CreatedAt        time.Time        `db:"CreatedAt"`
-	UpdatedAt        time.Time        `db:"UpdatedAt"`
+	UpdatedAt        *time.Time       `db:"UpdatedAt"`
 	Name             string           `db:"Name"`
 	Description      string           `db:"Description"`
 	Tandc            sql.NullString   `db:"Tandc"`

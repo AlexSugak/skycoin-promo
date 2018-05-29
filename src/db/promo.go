@@ -3,7 +3,7 @@ package db
 import "github.com/AlexSugak/skycoin-promo/src/db/models"
 
 // GetPromo returns an entity of a Promo from the DB
-func (s Storage) GetPromo(ID int64) (*models.Promo, error) {
+func (s Storage) GetPromo(ID models.PromoID) (*models.Promo, error) {
 	cmd := `SELECT ` +
 		`p.Id, ` +
 		`p.CreatedAt, ` +
@@ -39,7 +39,7 @@ func (s Storage) GetPromo(ID int64) (*models.Promo, error) {
 }
 
 // GetPromoCodeByCode returns an entity of a PromoCode from the DB
-func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {
+func (s Storage) GetPromoCodeByCode(code models.Code) (*models.PromoCode, error) {
 	cmd := `SELECT ` +
 		`pc.Id, ` +
 		`pc.CreatedAt, ` +
@@ -65,7 +65,7 @@ func (s Storage) GetPromoCodeByCode(code string) (*models.PromoCode, error) {
 }
 
 // GetRegisteredCodesAmount calculates amount registered promo codes for such promoID
-func (s Storage) GetRegisteredCodesAmount(promoID int) (int, error) {
+func (s Storage) GetRegisteredCodesAmount(promoID models.PromoID) (int, error) {
 	cmd := `SELECT DISTINCT COUNT(r.ID) ` +
 		`FROM Registration r ` +
 		`WHERE r.PromoId = ?`
