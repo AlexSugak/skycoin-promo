@@ -52,7 +52,7 @@ CREATE TABLE `Registration` (
   `Mobile` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Must be ASCII only.  e.g. +44 777 1771717',
   `AddressLine1` varchar(256) DEFAULT NULL,
   `AddressLine2` varchar(256) DEFAULT NULL,
-  `CountryCode` varchar(20) NOT NULL,
+  `CountryCode` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `State` varchar(256) DEFAULT NULL,
   `City` varchar(256) DEFAULT NULL,
   `Postcode` varchar(56) DEFAULT NULL,
