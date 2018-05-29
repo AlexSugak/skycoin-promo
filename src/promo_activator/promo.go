@@ -3,6 +3,7 @@ package activator
 import (
 	"database/sql"
 	"database/sql/driver"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -22,11 +23,16 @@ func (r *PromoCodeID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		i64, err := strconv.ParseInt(string(src.([]uint8)), 10, 64)
-		if err != nil {
-			return err
+		t := reflect.TypeOf(src).String()
+		if t == "[]uint8" {
+			i64, err := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+			if err != nil {
+				return err
+			}
+			*r = PromoCodeID(i64)
+		} else {
+			*r = PromoCodeID(src.(int64))
 		}
-		*r = PromoCodeID(i64)
 	}
 	return nil
 }
@@ -44,11 +50,16 @@ func (r *PromoID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		i64, err := strconv.ParseInt(string(src.([]uint8)), 10, 64)
-		if err != nil {
-			return err
+		t := reflect.TypeOf(src).String()
+		if t == "[]uint8" {
+			i64, err := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+			if err != nil {
+				return err
+			}
+			*r = PromoID(i64)
+		} else {
+			*r = PromoID(src.(int64))
 		}
-		*r = PromoID(i64)
 	}
 	return nil
 }
