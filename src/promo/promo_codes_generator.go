@@ -21,12 +21,15 @@ func GenerationHandler(s *HTTPServer) httputil.APIHandler {
 			return err
 		} else if len(promoCampaigns) == 0 {
 			return httputil.StatusError{
-				Err:  fmt.Errorf("There are no promo campaigns without promo codes. Add promo an empty campaign first."),
+				Err:  fmt.Errorf("there are no promo campaigns without promo codes. Add promo an empty campaign first"),
 				Code: http.StatusBadGateway,
 			}
 		}
 
-		s.generator.Generate(promoCampaigns, promoAmount)
+		err = s.generator.Generate(promoCampaigns, promoAmount)
+		if err != nil {
+			return err
+		}
 
 		return json.NewEncoder(w).Encode("OK")
 	}

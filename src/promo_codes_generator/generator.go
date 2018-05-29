@@ -10,7 +10,7 @@ import (
 
 // PromoGenerator represents a service that generates promocodes
 type PromoGenerator interface {
-	Generate(promoID activator.PromoID, count int)
+	Generate(promoID activator.PromoID, count int) error
 	GetEmptyPromos() ([]activator.Promo, error)
 }
 
@@ -25,19 +25,24 @@ func NewGenerator(DB *sqlx.DB) *Generator {
 }
 
 // Generate generates promo codes for specified promo campaign
-func (g Generator) Generate(promos []activator.Promo, amount int) {
+func (g Generator) Generate(promos []activator.Promo, amount int) error {
 	for i := 0; i < len(promos); i++ {
 		promoCodes := make([]activator.PromoCode, amount)
 		for j := 0; j < amount; j++ {
-			u, _ := uuid.NewV4()
+			u := uuid.NewV4()
+
 			pc := activator.PromoCode{
 				PromoID: promos[i].ID,
 				Code:    activator.Code(strings.Replace(u.String(), "-", "", -1)),
 			}
-			g.insertPromoCode(&pc)
+			_, err := g.insertPromoCode(&pc)
+			if err != nil {
+				return err
+			}
 			promoCodes[i] = pc
 		}
 	}
+	return nil
 }
 
 func (g Generator) insertPromoCode(code *activator.PromoCode) (*activator.PromoCode, error) {
@@ -83,9 +88,6 @@ func (g Generator) GetEmptyPromos() ([]activator.Promo, error) {
 
 	promos := []activator.Promo{}
 	err := g.DB.Select(&promos, cmd)
-	if err != nil {
-		return promos, err
-	}
 
-	return promos, nil
+	return promos, err
 }

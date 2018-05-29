@@ -22,7 +22,10 @@ func (r *PromoCodeID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		i64, _ := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+		i64, err := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+		if err != nil {
+			return err
+		}
 		*r = PromoCodeID(i64)
 	}
 	return nil
@@ -41,7 +44,10 @@ func (r *PromoID) Scan(src interface{}) error {
 	if src == nil {
 		*r = 0
 	} else {
-		i64, _ := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+		i64, err := strconv.ParseInt(string(src.([]uint8)), 10, 64)
+		if err != nil {
+			return err
+		}
 		*r = PromoID(i64)
 	}
 	return nil
