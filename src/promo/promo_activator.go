@@ -196,7 +196,7 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 		}
 		u.Status = activator.Completed
 		u.RejectionCode = activator.None
-		u.Amount = coins
+		u.Amount = promo.AmountPerAccount
 		publicKey = &wll.Entries[0].PublicKey
 
 		return json.NewEncoder(w).Encode(ActivationResponse{Seed: seed})

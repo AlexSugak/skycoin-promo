@@ -110,7 +110,7 @@ func (s *HTTPServer) setupRouter() http.Handler {
 	}
 
 	r.Handle("/promo/codes/generate", API(GenerationHandler)).Methods("POST")
-	r.Handle("/promo/{promoId}/{code}", API(ActivationHandler)).Methods("POST")
+	r.Handle("/promo/{promoId}/{promoCode}", API(ActivationHandler)).Methods("POST")
 
 	// TODO: enable CORS
 	originsOk := handlers.AllowedOrigins([]string{"*"})
