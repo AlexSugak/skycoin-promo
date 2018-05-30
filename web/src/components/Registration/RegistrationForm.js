@@ -19,7 +19,7 @@ class RegistrationForm extends React.Component {
         const { handleSubmit, pristine, submitting } = this.props;
 
         return (
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} noValidate>
                 <Heading mb={5} fontSize={2}>Name</Heading>
                 <Flex mx={-4} mb={6} flexWrap="wrap">
                     <Box width={[1, 1, 1 / 2]} px={4}>
