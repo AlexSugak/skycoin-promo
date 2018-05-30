@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import FormGroup from 'components/FormGroup';
+import ErrorMessage from 'components/ErrorMessage';
 
 const ControlInput = styled.input`
     width: 100%;
@@ -8,7 +9,7 @@ const ControlInput = styled.input`
     padding: ${props => props.theme.space[1]}px ${props => props.theme.space[2]}px;
     border-width: 1px;
     border-style: solid;
-    border-color: ${props => props.theme.colors.lightGrey};
+    border-color: ${props => (props.showError ? props.theme.colors.danger : props.theme.colors.lightGrey)};
     border-radius: ${props => props.theme.radius[0]}px;
     background: transparent;
     font-family: ${props => props.theme.fontLight};
@@ -28,7 +29,16 @@ const FormControl = (props) => {
 
     return (
         <FormGroup label={label} placeholder={placeholder} name={input.name}>
-            <ControlInput value={input.value} name={input.name} type={type} placeholder={placeholder} maxLength={maxLength} onChange={input.onChange} />
+            <ControlInput
+                value={input.value}
+                name={input.name}
+                type={type}
+                placeholder={placeholder}
+                maxLength={maxLength}
+                onChange={input.onChange}
+                showError={showError}
+            />
+            {showError && <ErrorMessage>{error || warning}</ErrorMessage>}
         </FormGroup>
     );
 }

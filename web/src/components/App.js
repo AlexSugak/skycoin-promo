@@ -54,7 +54,7 @@ const Wrapper = styled(Flex) `
 
 const Root = ({ locale, ...props }) => (
     <ThemeProvider theme={theme}>
-        <Wrapper flexDirection="column">
+        <Wrapper flexDirection="column" justifyContent="center">
             <Routes {...props} />
         </Wrapper>
     </ThemeProvider>

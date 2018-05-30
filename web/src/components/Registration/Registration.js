@@ -13,10 +13,19 @@ const StyledHeading = styled(Heading)`
 
 class Registration extends React.PureComponent {
     onSubmit = (user) => {
-        this.props.registerUser(user);
-    }
+        const { match: { params }, activate } = this.props;
+
+        const values = {
+            pid: parseInt(params.promoId, 10),
+            promotionCode: params.code,
+            ...user
+        };
+
+        activate(values);
+    };
 
     render() {
+
         return (
             <Container>
                 <Heading as="h3" fontSize={3} textAlign="center" my={4}>
@@ -26,10 +35,10 @@ class Registration extends React.PureComponent {
                     Register to receive 1 free SKY.  If you have not done so already, please download the wallet from <a href="https://www.skycoin.net/downloads/">here</a>
                 </StyledHeading>
 
-                <RegistrationForm onSubmit={this.onSubmit}  />
+                <RegistrationForm onSubmit={this.onSubmit} />
             </Container>
         );
     }
 }
 
-export default connect(null, { registerUser: register })(Registration);
+export default connect(null, { activate: register })(Registration);

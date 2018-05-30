@@ -5,6 +5,7 @@ const breakpoints = [
 const colors = {
     primary: '#0072ff',
     secondary: '#101f34',
+    danger: '#ff0043',
     white: '#fff',
     grey: '#9B9B9B',
     paleGrey: '#F4F4F4',
@@ -21,8 +22,8 @@ const fontSizes = [
 ];
 
 const fontFamilies = {
-    sans: '"skycoin-light", sans-serif',
-    sansBold: '"skycoin-bold", sans-serif',
+    sans: '"SkycoinSans"',
+    sansBold: '"SkycoinSansBold"',
 };
 
 const lineHeights = [
@@ -39,8 +40,8 @@ export default {
     fontFamilies,
     lineHeights,
     radius,
-    fontLight: '\'SkycoinSans\'',
-    fontBold: '\'SkycoinSansBold\'',
+    fontLight: '"SkycoinSans"',
+    fontBold: '"SkycoinSansBold"',
     container: {
         width: '90%',
         maxWidth: '640px',

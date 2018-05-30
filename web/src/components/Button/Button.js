@@ -2,12 +2,15 @@ import styled from 'styled-components';
 import { space, width, fontSize } from 'styled-system';
 
 const Button = styled.button`
-    padding: 8px 26px;
+    width: ${props => props.block ? '100%': 'auto'};
+    padding: ${props => props.theme.space[3]}px ${props => props.theme.space[7]}px;
+    border-radius: ${props => props.theme.radius[1]}px;
+    border-width: 0;
+    background: ${props => props.theme.colors.primary};
+    font-size: ${props => props.theme.fontSizes[2]}px;
     font-family: ${props => props.theme.fontLight};
     line-height: 22px;
-    font-size: ${props => props.theme.fontSizes[1]}px;
-    border-width: 1px;
-    width: ${props => props.block ? '100%': 'auto'};
+    color: ${props => props.theme.colors.white};
 
     &:focus {
         outline: none;

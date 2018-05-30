@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import { Switch, Route } from 'react-router-dom';
 
 import Registration from './Registration';
+import Congratulations from './Congratulations';
 
 const Routes = ({ match }) => {
     return (
         <Switch>
-            <Route path={`/`} component={Registration} />
+            <Route path={`/:promoId/:code`} component={Registration} exact />
+            <Route path={`/thankyou`} component={Congratulations} exact />
         </Switch>
     );
 };
