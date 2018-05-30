@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/AlexSugak/skycoin-promo/src/geo"
 	activator "github.com/AlexSugak/skycoin-promo/src/promo_activator"
 	generator "github.com/AlexSugak/skycoin-promo/src/promo_codes_generator"
 	"github.com/AlexSugak/skycoin-promo/src/security"
@@ -31,6 +32,7 @@ type HTTPServer struct {
 	log            logrus.FieldLogger
 	done           chan struct{}
 	validate       *validator.Validate
+	geo            geo.Geo
 }
 
 // NewHTTPServer creates new http server
@@ -39,7 +41,8 @@ func NewHTTPServer(binding string,
 	log logrus.FieldLogger,
 	activator activator.PromoActivator,
 	skyNode skynode.NodeAPI,
-	generator generator.Generator) *HTTPServer {
+	generator generator.Generator,
+	geo geo.Geo) *HTTPServer {
 	return &HTTPServer{
 		binding:        binding,
 		checkRecaptcha: security.InitRecaptchaChecker(recaptchaSecret),
@@ -52,6 +55,7 @@ func NewHTTPServer(binding string,
 		activator: activator,
 		skyNode:   skyNode,
 		generator: generator,
+		geo:       geo,
 	}
 }
 
@@ -109,6 +113,7 @@ func (s *HTTPServer) setupRouter() http.Handler {
 		return httputil.AcceptJSONHandler(httputil.JSONHandler(httputil.ErrorHandler(s.log, h(s))))
 	}
 
+	r.Handle("/geo/countries", API(CountriesHandler)).Methods("GET")
 	r.Handle("/promo/codes/generate", API(GenerationHandler)).Methods("POST")
 	r.Handle("/promo/{promoId}/{promoCode}", API(ActivationHandler)).Methods("POST")
 

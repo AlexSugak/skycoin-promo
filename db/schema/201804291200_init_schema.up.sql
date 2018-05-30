@@ -39,7 +39,6 @@ CREATE TABLE `PromoCode` (
   UNIQUE (`PromoId` ,`Code`)
 );
 
-
 CREATE TABLE `Registration` (
   `Id` bigint(20) NOT NULL AUTO_INCREMENT,
   `CreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'System generated, do not write',

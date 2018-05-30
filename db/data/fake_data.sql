@@ -1,9 +1,3 @@
-INSERT INTO `Country`
-(`ISO`, `Name`) 
-VALUES
-('US', 'United States of America'),
-('GR', 'Greece');
-
 INSERT INTO `Promo` (`Name`, `Description`, `AmountPerAccount`, `MaxAccounts`, `AdminEmail`, `SourceKey`) VALUES ('SKY test promo', 'SKY test promo', '1', '20', 'sky.test@test.com', '123456');
 
 INSERT INTO `PromoCode` (`PromoId`, `Code`) VALUES ('1', '1');
