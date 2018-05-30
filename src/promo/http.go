@@ -24,7 +24,7 @@ type HTTPServer struct {
 	binding        string
 	activator      activator.PromoActivator
 	checkRecaptcha security.RecaptchaChecker
-	generator      generator.Generator
+	generator      generator.PromoGenerator
 	skyNode        skynode.NodeAPI
 	httpListener   *http.Server
 	quit           chan os.Signal

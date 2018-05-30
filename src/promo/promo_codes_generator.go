@@ -26,7 +26,7 @@ func GenerationHandler(s *HTTPServer) httputil.APIHandler {
 			}
 		}
 
-		err = s.generator.Generate(promoCampaigns, promoAmount)
+		err = s.generator.Generate(promoCampaigns)
 		if err != nil {
 			return err
 		}
