@@ -38,6 +38,13 @@ func ValidateContentType(r *http.Request, expectedType string) error {
 // ErrorHandler wraps APIHandler and converts it to http.Handler by handling any returned error
 func ErrorHandler(log logrus.FieldLogger, h APIHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if e, ok := recover().(error); ok {
+				log.Errorf("Panic error >>> %s: HTTP 500 - %s", r.URL, e.Error())
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+
 		err := h(w, r)
 		if err != nil {
 			switch e := err.(type) {

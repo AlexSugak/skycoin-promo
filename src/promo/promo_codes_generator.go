@@ -22,7 +22,7 @@ func GenerationHandler(s *HTTPServer) httputil.APIHandler {
 		} else if len(promoCampaigns) == 0 {
 			return httputil.StatusError{
 				Err:  fmt.Errorf("there are no promo campaigns without promo codes. Add promo an empty campaign first"),
-				Code: http.StatusBadGateway,
+				Code: http.StatusBadRequest,
 			}
 		}
 
