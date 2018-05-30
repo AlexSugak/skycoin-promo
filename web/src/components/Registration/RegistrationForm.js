@@ -5,6 +5,7 @@ import { createTextMask } from 'redux-form-input-masks';
 import { Flex, Box } from 'grid-styled';
 import Button from 'components/Button';
 import FormControl from 'components/FormControl';
+import FormDropdown from 'components/FormDropdown';
 import FormReCaptcha from 'components/FormReCaptcha';
 import Heading from 'components/Heading';
 import { required, email } from 'validation';
@@ -16,7 +17,7 @@ const phoneMask = createTextMask({
 
 class RegistrationForm extends React.Component {
     render() {
-        const { handleSubmit, pristine, submitting } = this.props;
+        const { handleSubmit, pristine, submitting, countries } = this.props;
 
         return (
             <Form onSubmit={handleSubmit} noValidate>
@@ -53,7 +54,7 @@ class RegistrationForm extends React.Component {
                         <Field type="text" name="postcode" label="Postcode" component={FormControl} validate={[required]} />
                     </Box>
                     <Box width={[1, 1, 1 / 2]} px={4}>
-                        <Field type="text" name="countryCode" label="Country" component={FormControl} validate={[required]} />
+                        <Field type="text" name="countryCode" label="Country" component={FormDropdown} options={countries} validate={[required]} />
                     </Box>
                 </Flex>
                 <Flex mt={6} flexWrap="wrap" alignItems="center" justifyContent="space-between">

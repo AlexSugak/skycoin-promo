@@ -27,7 +27,7 @@ const fontFamilies = {
 };
 
 const lineHeights = [
-    1, 1.125, 1.25, 1.5
+    1, 1.125, 1.25, 1.5, 2
 ];
 
 const radius = [ 2, 4, 8 ];

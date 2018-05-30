@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Container from 'components/Container';
 import Heading from 'components/Heading';
@@ -20,7 +21,7 @@ const Icon = styled.div`
     
 `;
 
-const Code = styled.div`
+const Seed = styled.div`
     margin-bottom: ${iconHeight / 3}px;
     padding-top: ${iconHeight / 3}px;
     padding-bottom: ${props => props.theme.space[4]}px;
@@ -33,21 +34,22 @@ const Text = styled.p`
     font-size: ${props => props.theme.fontSizes[1]}px;
 `;
 
-class Congratulations extends React.PureComponent {
+class Congratulations extends React.Component {
     render() {
+        const { seed } = this.props;
 
         return (
             <Container>
                 <Heading as="h3" fontSize={3} textAlign="center" my={0}>
-                    Congratulation!
+                    Congratulations!
                 </Heading>
                 <Icon />
-                <Code>
-                    <Text>Example code</Text>
-                </Code>
+                <Seed>
+                    <Text>{seed}</Text>
+                </Seed>
             </Container>
         );
     }
 }
 
-export default Congratulations;
+export default connect(state => ({ seed: state.registration.seed }))(Congratulations);

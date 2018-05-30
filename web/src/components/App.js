@@ -1,13 +1,14 @@
 import React from 'react';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'react-router-redux';
 import styled, { injectGlobal, ThemeProvider } from 'styled-components';
 import { Flex } from 'grid-styled';
 
 import Routes from './Routes';
 
 import theme from './theme';
-import store from '../store';
+import store, { history } from '../store';
 
 import skycoinLight from '../fonts/skycoin-regular-webfont.woff';
 import skycoinBold from '../fonts/skycoin-bold-webfont.woff';
@@ -62,10 +63,10 @@ const Root = ({ locale, ...props }) => (
 
 export default () => (
     <Provider store={store}>
-        <BrowserRouter>
+        <ConnectedRouter history={history}>
             <Switch>
                 <Route path="/" render={props => <Root {...props} locale="en" />} />
             </Switch>
-        </BrowserRouter>
+        </ConnectedRouter>
     </Provider>
 );

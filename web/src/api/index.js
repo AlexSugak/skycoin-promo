@@ -7,6 +7,8 @@ const headers = {
     }
 };
 
-export const activatePromo = user =>
-    axios.post(`/promo/activate`, JSON.stringify(user), headers);
+export const activatePromo = (user, promoId, promoCode) =>
+    axios.post(`/promo/${promoId}/${promoCode}`, JSON.stringify(user), headers);
 
+export const getCountriesList = () =>
+    axios.get(`/geo/countries`, headers);

@@ -4,7 +4,7 @@ import { routerMiddleware } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 import rootReducer from './rootReducer';
 
-const history = createHistory();
+export const history = createHistory();
 
 const initialState = {};
 const enhancers = [];
