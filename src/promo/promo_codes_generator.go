@@ -8,8 +8,6 @@ import (
 	"github.com/AlexSugak/skycoin-promo/src/util/httputil"
 )
 
-const promoAmount = 20
-
 // GenerationHandler generates a bunch of promo codes
 // Method: POST
 // Content-type: application/json

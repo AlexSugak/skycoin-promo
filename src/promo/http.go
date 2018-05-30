@@ -41,7 +41,7 @@ func NewHTTPServer(binding string,
 	log logrus.FieldLogger,
 	activator activator.PromoActivator,
 	skyNode skynode.NodeAPI,
-	generator generator.Generator,
+	generator generator.PromoGenerator,
 	geo geo.Geo) *HTTPServer {
 	return &HTTPServer{
 		binding:        binding,
