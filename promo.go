@@ -18,7 +18,7 @@ import (
 func main() {
 	flag.String(flag.DefaultConfigFlagname, "", "path to config file")
 	bindingFlag := flag.String("binding", "0.0.0.0:8081", "HTTP server binding")
-	recaptchaSecret := flag.String("recaptchaSecret", "6LcIDlkUAAAAAB7-YebjJSUBb2aINasOnNk0zF8W", "Recaptcha secret")
+	recaptchaSecret := flag.String("recaptchaSecret", "6LdTKksUAAAAAAMgKNhOcxgWYYCDRrgx8YoEH5qX", "Recaptcha secret")
 	skyNodeURL := flag.String("skyNodeURL", "http://127.0.0.1:6420", "A base URL of skynode")
 	mysqlFlag := flag.String("mysql", "root:root@(0.0.0.0:3306)", "MySQL connect string")
 
