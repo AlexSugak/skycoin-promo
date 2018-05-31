@@ -20,7 +20,7 @@ func FirstToLower(str string) string {
 		return strings.ToLower(str)
 	} else if len(str) > 1 {
 		head := strings.ToLower(str[0:1])
-		tail := str[1:len(str)]
+		tail := str[1:]
 		return fmt.Sprintf("%s%s", head, tail)
 	}
 
