@@ -3,6 +3,7 @@ package errors
 import (
 	"fmt"
 
+	"github.com/AlexSugak/skycoin-promo/src/util"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
@@ -40,7 +41,7 @@ func ValidatorErrorsResponse(errors validator.ValidationErrors) ValidationError 
 
 	for i := 0; i < len(errors); i++ {
 		ve := ValidationErrorResponse{
-			Key:     errors[i].Field(),
+			Key:     util.FirstToLower(errors[i].Field()),
 			Message: mapFieldErrorToErrorMessage(errors[i]),
 		}
 		errorResponse = append(errorResponse, ve)

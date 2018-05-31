@@ -22,8 +22,8 @@ import (
 type ActivationRequest struct {
 	FirstName    string `json:"firstName" validate:"required"`
 	LastName     string `json:"lastName" validate:"required"`
-	Email        string `json:"email" validate:"required"`
-	Mobile       string `json:"mobile" validate:"required"`
+	Email        string `json:"email" validate:"required,email"`
+	Mobile       string `json:"mobile" validate:"required,len=12"`
 	AddressLine1 string `json:"addressLine1" validate:"required"`
 	AddressLine2 string `json:"addressLine2" validate:"required"`
 	City         string `json:"city" validate:"required"`
@@ -69,12 +69,12 @@ func ActivationHandler(s *HTTPServer) httputil.APIHandler {
 			return e.ValidatorErrorsResponse(err.(validator.ValidationErrors))
 		}
 
-		cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
-		if err != nil {
-			return err
-		} else if !cp {
-			return e.CreateSingleValidationError("recaptcha", "is not valid")
-		}
+		// cp, err := s.checkRecaptcha(activationRequest.Recaptcha)
+		// if err != nil {
+		// 	return err
+		// } else if !cp {
+		// 	return e.CreateSingleValidationError("recaptcha", "is not valid")
+		// }
 
 		u := &activator.RegisteredUser{
 			PromoID:       pID,
