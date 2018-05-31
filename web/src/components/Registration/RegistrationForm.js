@@ -14,13 +14,21 @@ const phoneMask = createTextMask({
     pattern: '(999) 99 999-99-99',
 });
 
-
 class RegistrationForm extends React.Component {
+    componentDidUpdate(prevProps) {
+        // Reset captcha after receiving response
+        if (prevProps.submitting && prevProps.submitting !== this.props.submitting) {
+            const recaptchaComponent = this.recaptchaField.getRenderedComponent();
+            recaptchaComponent.resetRecaptcha();
+        }
+    }
+
     render() {
-        const { handleSubmit, pristine, submitting, countries } = this.props;
+        const { handleSubmit, pristine, submitting, error, countries } = this.props;
 
         return (
             <Form onSubmit={handleSubmit} noValidate>
+                {error && <Heading mb={4} fontSize={2} color="danger">{error}</Heading>}
                 <Heading mb={5} fontSize={2}>Name</Heading>
                 <Flex mx={-4} mb={6} flexWrap="wrap">
                     <Box width={[1, 1, 1 / 2]} px={4}>
@@ -40,7 +48,7 @@ class RegistrationForm extends React.Component {
                     </Box>
                 </Flex>
                 <Field type="text" name="addressLine1" label="Address line 1" component={FormControl} validate={[required]} />
-                <Field type="text" name="addressLine2" label="Address line 2" component={FormControl} validate={[required]} />
+                <Field type="text" name="addressLine2" label="Address line 2" component={FormControl} />
                 <Flex mx={-4} flexWrap="wrap">
                     <Box width={[1, 1, 1 / 2]} px={4}>
                         <Field type="text" name="city" label="City" component={FormControl} validate={[required]} />

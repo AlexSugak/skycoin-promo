@@ -19,7 +19,12 @@ export const register = (user, promoId, promoCode) =>
                 const errors = e.response.data;
                 let formErrors = {};
 
-                Object.values(errors).map(k => formErrors[k.key] = k.message);
+                if (typeof errors === 'string') {
+                    formErrors._error = errors;
+                } else {
+                    Object.values(errors).map(k => formErrors[k.key] = k.message);
+                }
+
                 return Promise.reject(formErrors);
             }
         }

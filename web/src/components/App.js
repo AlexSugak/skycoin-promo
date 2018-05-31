@@ -50,7 +50,6 @@ injectGlobal`
 const Wrapper = styled(Flex) `
     min-height: 100vh;
     max-width: 100%;
-    overflow-x: hidden;
 `;
 
 const Root = ({ locale, ...props }) => (
