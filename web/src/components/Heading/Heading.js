@@ -5,7 +5,7 @@ import createComponentFromTagProp from 'react-create-component-from-tag-prop';
 const Heading = createComponentFromTagProp({
     tag: 'h2',
     prop: 'as',
-    propsToOmit: ['fontSize', 'color', 'bg', 'mt', 'mb', 'my', 'heavy', 'caps', 'textAlign'],
+    propsToOmit: ['fontSize', 'color', 'bg', 'mt', 'mb', 'my', 'bold', 'caps', 'textAlign'],
 });
 
 export default styled(Heading)`   
@@ -18,4 +18,6 @@ export default styled(Heading)`
     ${lineHeight}
     ${color}
     ${textAlign}
+    
+    font-family: ${props => props.bold ? props.theme.fontBold : props.theme.fontLight};
 `;

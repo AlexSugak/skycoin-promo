@@ -29,6 +29,10 @@ injectGlobal`
   * {
     box-sizing: border-box;
   }
+  
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
     
   body {
     margin: 0;

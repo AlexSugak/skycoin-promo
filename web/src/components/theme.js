@@ -11,6 +11,7 @@ const colors = {
     paleGrey: '#F4F4F4',
     lightGrey: '#D2D2D2',
     darkGrey: '#4A4A4A',
+    paleBlue: '#F4F9FF',
 };
 
 const space = [

@@ -25,7 +25,7 @@ const Seed = styled.div`
     margin-bottom: ${iconHeight / 3}px;
     padding-top: ${iconHeight / 3}px;
     padding-bottom: ${props => props.theme.space[4]}px;
-    background: ${props => props.theme.colors.paleGrey};
+    background: ${props => props.theme.colors.paleBlue};
     text-align: center;
 `;
 

@@ -32,7 +32,7 @@ class Registration extends React.Component {
                 <Heading as="h3" fontSize={3} textAlign="center" my={4}>
                     Hello
                 </Heading>
-                <StyledHeading as="h1" heavy fontSize={2} textAlign="center" pb={4} mb={8}>
+                <StyledHeading as="h1" bold fontSize={2} textAlign="center" pb={4} mb={8}>
                     Register to receive 1 free SKY.  If you have not done so already, please download the wallet from <a href="https://www.skycoin.net/downloads/">here</a>
                 </StyledHeading>
 
